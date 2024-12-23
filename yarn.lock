@@ -2368,6 +2368,7 @@ __metadata:
     "@types/react": ^18.3.5
     "@uniswap/sdk-core": ^5.8.2
     "@uniswap/v2-sdk": ^4.6.1
+    "@upstash/redis": ^1.34.3
     abitype: 1.0.6
     autoprefixer: ^10.4.20
     blo: ^1.2.0
@@ -3190,6 +3191,15 @@ __metadata:
     tiny-invariant: ^1.1.0
     tiny-warning: ^1.0.3
   checksum: 0d4c1e58feef7d65c143a776447dbe4e0c06c2f2b6877d57b2db3056a4f8c441c503449f5bfa150ac9e02516ef1c6f5fce5bc89a55d637311bc3e5c8e01ef163
+  languageName: node
+  linkType: hard
+
+"@upstash/redis@npm:^1.34.3":
+  version: 1.34.3
+  resolution: "@upstash/redis@npm:1.34.3"
+  dependencies:
+    crypto-js: ^4.2.0
+  checksum: 4c738eb82e3d8906999345379ff0c96913627cdf96ec54b6880fa8fb5616331a92228b889c076b4a93bee4bb31324f5afa68aa927fb751d308fc83464de68e79
   languageName: node
   linkType: hard
 
@@ -5476,6 +5486,13 @@ __metadata:
   version: 0.0.2
   resolution: "crypt@npm:0.0.2"
   checksum: baf4c7bbe05df656ec230018af8cf7dbe8c14b36b98726939cef008d473f6fe7a4fad906cfea4062c93af516f1550a3f43ceb4d6615329612c6511378ed9fe34
+  languageName: node
+  linkType: hard
+
+"crypto-js@npm:^4.2.0":
+  version: 4.2.0
+  resolution: "crypto-js@npm:4.2.0"
+  checksum: f051666dbc077c8324777f44fbd3aaea2986f198fe85092535130d17026c7c2ccf2d23ee5b29b36f7a4a07312db2fae23c9094b644cc35f7858b1b4fcaf27774
   languageName: node
   linkType: hard
 

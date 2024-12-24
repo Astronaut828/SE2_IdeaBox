@@ -1,32 +1,26 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { PrivyProvider } from "@privy-io/react-auth";
 import { RainbowKitProvider, darkTheme, lightTheme } from "@rainbow-me/rainbowkit";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AppProgressBar as ProgressBar } from "next-nprogress-bar";
 import { useTheme } from "next-themes";
 import { Toaster } from "react-hot-toast";
+import { hardhat } from "viem/chains";
 import { WagmiProvider } from "wagmi";
 import { Footer } from "~~/components/Footer";
 import { Header } from "~~/components/Header";
+import AuthWrapper from "~~/components/auth/AuthWrapper";
 import { BlockieAvatar } from "~~/components/scaffold-eth";
 import { useInitializeNativeCurrencyPrice } from "~~/hooks/scaffold-eth";
 import { wagmiConfig } from "~~/services/web3/wagmiConfig";
 
-const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
-  useInitializeNativeCurrencyPrice();
+const PRIVY_APP_ID = process.env.NEXT_PUBLIC_PRIVY_APP_ID;
 
-  return (
-    <>
-      <div className="flex flex-col min-h-screen">
-        <Header />
-        <main className="relative flex flex-col flex-1">{children}</main>
-        <Footer />
-      </div>
-      <Toaster />
-    </>
-  );
-};
+if (!PRIVY_APP_ID) {
+  throw new Error("NEXT_PUBLIC_PRIVY_APP_ID is not set");
+}
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -35,6 +29,21 @@ export const queryClient = new QueryClient({
     },
   },
 });
+
+const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
+  useInitializeNativeCurrencyPrice();
+
+  return (
+    <AuthWrapper>
+      <div className="flex flex-col min-h-screen">
+        <Header />
+        <main className="relative flex flex-col flex-1">{children}</main>
+        <Footer />
+      </div>
+      <Toaster />
+    </AuthWrapper>
+  );
+};
 
 export const ScaffoldEthAppWithProviders = ({ children }: { children: React.ReactNode }) => {
   const { resolvedTheme } = useTheme();
@@ -48,13 +57,30 @@ export const ScaffoldEthAppWithProviders = ({ children }: { children: React.Reac
   return (
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
-        <ProgressBar height="3px" color="#2299dd" />
-        <RainbowKitProvider
-          avatar={BlockieAvatar}
-          theme={mounted ? (isDarkMode ? darkTheme() : lightTheme()) : lightTheme()}
+        <PrivyProvider
+          appId={PRIVY_APP_ID}
+          config={{
+            appearance: {
+              theme: isDarkMode ? "dark" : "light",
+              accentColor: "#2299dd",
+            },
+            embeddedWallets: {
+              createOnLogin: "users-without-wallets",
+              noPromptOnSignature: true,
+            },
+            loginMethods: ["email", "wallet"],
+            defaultChain: hardhat,
+            supportedChains: [hardhat],
+          }}
         >
-          <ScaffoldEthApp>{children}</ScaffoldEthApp>
-        </RainbowKitProvider>
+          <ProgressBar height="3px" color="#2299dd" />
+          <RainbowKitProvider
+            avatar={BlockieAvatar}
+            theme={mounted ? (isDarkMode ? darkTheme() : lightTheme()) : lightTheme()}
+          >
+            <ScaffoldEthApp>{children}</ScaffoldEthApp>
+          </RainbowKitProvider>
+        </PrivyProvider>
       </QueryClientProvider>
     </WagmiProvider>
   );

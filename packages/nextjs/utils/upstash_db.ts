@@ -58,13 +58,11 @@ export const db = {
     try {
       const userData = await redis.get<string>(key);
       console.log("Raw data from Redis:", userData);
-      return null;
+      if (!userData) return null;
+      return JSON.parse(userData) as User;
     } catch (error) {
       console.error("Read error:", error);
       throw error;
     }
   },
 };
-
-const user = await db.readUser("user:123");
-console.log(user);

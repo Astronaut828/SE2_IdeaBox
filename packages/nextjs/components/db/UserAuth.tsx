@@ -46,6 +46,7 @@ const UserAuth = () => {
   return (
     <div className="p-6 bg-base-100 border border-base-300 rounded-lg shadow-md">
       <h2 className="text-xl font-semibold mb-4">Write User Data</h2>
+      <p>User Auth Database widget</p>
       <div className="space-y-4">
         <input
           type="text"

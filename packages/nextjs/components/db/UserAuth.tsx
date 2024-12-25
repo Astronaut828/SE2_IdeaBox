@@ -89,10 +89,23 @@ const UserAuth = () => {
 
       {fetchedUser && (
         <div className="mt-6 p-4 bg-base-200 rounded-lg">
-          <h3 className="text-lg font-semibold">Fetched User:</h3>
-          <p>ID: {fetchedUser._id}</p>
-          <p>Name: {fetchedUser.name}</p>
-          <p>Payed: {fetchedUser.payed ? "Yes" : "No"}</p>
+          <h3 className="text-lg font-semibold mb-4">Fetched User:</h3>
+          <div className="space-y-2">
+            <p>
+              <span className="font-medium">ID:</span> {fetchedUser._id}
+            </p>
+            <p>
+              <span className="font-medium">Name:</span> {fetchedUser.name}
+            </p>
+            <p>
+              <span className="font-medium">Payed:</span> {fetchedUser.payed ? "Yes" : "No"}
+            </p>
+
+            <div className="mt-4 p-4 bg-base-300 rounded-lg">
+              <p className="font-medium mb-2">Debug Data:</p>
+              <pre className="text-xs overflow-auto whitespace-pre-wrap">{JSON.stringify(fetchedUser, null, 2)}</pre>
+            </div>
+          </div>
         </div>
       )}
     </div>

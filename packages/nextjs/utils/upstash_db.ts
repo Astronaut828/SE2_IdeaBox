@@ -57,14 +57,20 @@ export const db = {
   async readUser(key: string): Promise<User | null> {
     try {
       const userData = await redis.get<string>(key);
-      console.log("Raw data from Redis:", userData);
-      return null;
+      // console.log("Raw data from Redis:", userData);
+
+      if (!userData) return null;
+
+      // Handle case where data might already be an object
+      if (typeof userData === "object") {
+        return userData as User;
+      }
+
+      // Parse string data
+      return JSON.parse(userData) as User;
     } catch (error) {
       console.error("Read error:", error);
       throw error;
     }
   },
 };
-
-const user = await db.readUser("user:123");
-console.log(user);

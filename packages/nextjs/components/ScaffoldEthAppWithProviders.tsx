@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { PrivyProvider } from "@privy-io/react-auth";
+import { usePrivy } from "@privy-io/react-auth";
 import { RainbowKitProvider, darkTheme, lightTheme } from "@rainbow-me/rainbowkit";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AppProgressBar as ProgressBar } from "next-nprogress-bar";
@@ -31,14 +32,15 @@ export const queryClient = new QueryClient({
 });
 
 const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
+  const { authenticated } = usePrivy();
   useInitializeNativeCurrencyPrice();
 
   return (
     <AuthWrapper>
       <div className="flex flex-col min-h-screen">
-        <Header />
+        {authenticated && <Header />}
         <main className="relative flex flex-col flex-1">{children}</main>
-        <Footer />
+        {authenticated && <Footer />}
       </div>
       <Toaster />
     </AuthWrapper>

@@ -5,15 +5,15 @@ import { usePathname, useRouter } from "next/navigation";
 import { usePrivy } from "@privy-io/react-auth";
 
 const AuthWrapper = ({ children }: { children: React.ReactNode }) => {
-  const { user, ready } = usePrivy();
+  const { authenticated, ready } = usePrivy();
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
-    if (ready && !user && pathname !== "/login") {
+    if (ready && !authenticated && pathname !== "/login") {
       router.replace("/login");
     }
-  }, [ready, user, router, pathname]);
+  }, [ready, authenticated, router, pathname]);
 
   if (!ready) {
     return (
@@ -29,7 +29,7 @@ const AuthWrapper = ({ children }: { children: React.ReactNode }) => {
   }
 
   // Show loading state instead of immediate redirect
-  if (!user) {
+  if (!authenticated) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <span className="loading loading-spinner loading-lg"></span>

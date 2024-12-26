@@ -2508,6 +2508,7 @@ __metadata:
     "@heroicons/react": ^2.1.5
     "@privy-io/react-auth": ^1.98.4
     "@rainbow-me/rainbowkit": 2.1.6
+    "@stripe/stripe-js": ^5.4.0
     "@tanstack/react-query": ^5.59.15
     "@trivago/prettier-plugin-sort-imports": ^4.3.0
     "@types/node": ^18.19.50
@@ -2534,6 +2535,7 @@ __metadata:
     react-copy-to-clipboard: ^5.1.0
     react-dom: ^18.3.1
     react-hot-toast: ^2.4.0
+    stripe: ^17.5.0
     tailwindcss: ^3.4.11
     type-fest: ^4.26.1
     typescript: <5.6.0
@@ -2918,6 +2920,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@stripe/react-stripe-js@npm:^3.1.1":
+  version: 3.1.1
+  resolution: "@stripe/react-stripe-js@npm:3.1.1"
+  dependencies:
+    prop-types: ^15.7.2
+  peerDependencies:
+    "@stripe/stripe-js": ^1.44.1 || ^2.0.0 || ^3.0.0 || ^4.0.0 || ^5.0.0
+    react: ">=16.8.0 <20.0.0"
+    react-dom: ">=16.8.0 <20.0.0"
+  checksum: ede063f4250892c79fbd65169ddbb2c57ab841730c994e47afd52f99c6bedfdb98327538f618beb5f2b8d50b80672856c71441707ece265b9a1a44f6fe56ae07
+  languageName: node
+  linkType: hard
+
+"@stripe/stripe-js@npm:^5.4.0":
+  version: 5.4.0
+  resolution: "@stripe/stripe-js@npm:5.4.0"
+  checksum: d92f27e56245189a718dee88016587c8be9a1eff5b66bcec287350cef9fb854b52a6e64e51057711adb68c22115cb0723dcc424063f1841b499779eb09154b94
+  languageName: node
+  linkType: hard
+
 "@swc/counter@npm:^0.1.3":
   version: 0.1.3
   resolution: "@swc/counter@npm:0.1.3"
@@ -3213,7 +3235,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*":
+"@types/node@npm:*, @types/node@npm:>=8.1.0":
   version: 22.10.2
   resolution: "@types/node@npm:22.10.2"
   dependencies:
@@ -11895,7 +11917,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prop-types@npm:^15.8.1":
+"prop-types@npm:^15.7.2, prop-types@npm:^15.8.1":
   version: 15.8.1
   resolution: "prop-types@npm:15.8.1"
   dependencies:
@@ -11973,7 +11995,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"qs@npm:^6.9.4":
+"qs@npm:^6.11.0, qs@npm:^6.9.4":
   version: 6.13.1
   resolution: "qs@npm:6.13.1"
   dependencies:
@@ -12625,6 +12647,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "se-2@workspace:."
   dependencies:
+    "@stripe/react-stripe-js": ^3.1.1
+    "@stripe/stripe-js": ^5.4.0
     husky: ^9.1.6
     lint-staged: ^15.2.10
   languageName: unknown
@@ -13404,6 +13428,16 @@ __metadata:
   version: 3.1.1
   resolution: "strip-json-comments@npm:3.1.1"
   checksum: 492f73e27268f9b1c122733f28ecb0e7e8d8a531a6662efbd08e22cccb3f9475e90a1b82cab06a392f6afae6d2de636f977e231296400d0ec5304ba70f166443
+  languageName: node
+  linkType: hard
+
+"stripe@npm:^17.5.0":
+  version: 17.5.0
+  resolution: "stripe@npm:17.5.0"
+  dependencies:
+    "@types/node": ">=8.1.0"
+    qs: ^6.11.0
+  checksum: 3f4298c838f7f67189a2ed2a98cf237fb521f81e90bbe5295c7862ab7029741a083f6e222af1aacc9a5fb2628b5a154855f25ac5341e909032bdf942a882cc45
   languageName: node
   linkType: hard
 

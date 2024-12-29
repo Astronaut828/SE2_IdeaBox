@@ -56,6 +56,8 @@
   },
   "dependencies": {
     "@stripe/react-stripe-js": "^3.1.1",
-    "@stripe/stripe-js": "^5.4.0"
+    "@stripe/stripe-js": "^5.4.0",
+    "react-confetti": "^6.2.2",
+    "react-use": "^17.6.0"
   }
 }

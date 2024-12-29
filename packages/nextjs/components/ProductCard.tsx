@@ -159,7 +159,6 @@ export const ProductCard = ({ product }: ProductCardProps) => {
             >
               ✕
             </button>
-            <h3 className="font-bold text-lg mb-4">Complete Your Payment</h3>
             <StripePaymentButton amount={product.price} />
           </div>
           <div className="modal-backdrop" onClick={() => setIsStripeModalOpen(false)}>

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Elements, PaymentElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
+import Confetti from "react-confetti";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
@@ -12,6 +13,9 @@ const CheckoutForm = ({ amount }: { amount: bigint }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [status, setStatus] = useState<"initial" | "processing" | "succeeded" | "failed">("initial");
+
+  const width = window.innerWidth * 2;
+  const height = window.innerHeight * 2;
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -54,17 +58,9 @@ const CheckoutForm = ({ amount }: { amount: bigint }) => {
   if (status === "succeeded") {
     return (
       <div className="text-center p-6">
+        <Confetti width={width} height={height} recycle={false} numberOfPieces={800} gravity={0.2} />
         <h3 className="text-2xl font-bold text-success mb-4">Payment Successful!</h3>
-        <p className="text-sm mb-4">Thank you for your payment</p>
-        <button
-          className="btn btn-primary"
-          onClick={() => {
-            setStatus("initial");
-            window.location.reload();
-          }}
-        >
-          Make Another Payment
-        </button>
+        <p className="text-sm mb-4">Thank you for your purchase!</p>
       </div>
     );
   }

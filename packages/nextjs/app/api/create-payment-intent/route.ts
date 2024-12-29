@@ -9,10 +9,12 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: "2024-12-18.acacia",
 });
 
-export async function POST() {
+export async function POST(request: Request) {
   try {
+    const { amount } = await request.json();
+
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: 55, // Amount in cents - TODO: fetch dynamic price for product
+      amount: Math.round(amount * 100), // Convert dollars to cents
       currency: "usd",
       payment_method_types: ["card"],
       automatic_payment_methods: {

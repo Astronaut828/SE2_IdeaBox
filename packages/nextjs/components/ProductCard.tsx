@@ -1,5 +1,7 @@
+import { useState } from "react";
 import Image from "next/image";
 import { CourseProduct, DigitalProduct, SubscriptionProduct } from "./ProductModels";
+import { StripePaymentButton } from "./StripePaymentButton";
 
 interface ProductCardProps {
   product: DigitalProduct | CourseProduct | SubscriptionProduct;
@@ -95,6 +97,8 @@ export const ProductCard = ({ product }: ProductCardProps) => {
     }
   };
 
+  const [isStripeModalOpen, setIsStripeModalOpen] = useState(false);
+
   return (
     <div className="card bg-base-100 shadow-xl h-full hover:shadow-2xl transition-shadow duration-200">
       <figure className="px-4 pt-4">
@@ -126,12 +130,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
           <div className="divider my-1"></div>
 
           <div className="flex justify-center gap-6 w-full px-6">
-            <button
-              className="btn btn-primary btn-sm"
-              onClick={() => {
-                /* Stripe payment handler */
-              }}
-            >
+            <button className="btn btn-primary btn-sm" onClick={() => setIsStripeModalOpen(true)}>
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M4 3h16a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zm1 2v14h14V5H5zm2 6h10v2H7v-2z" />
               </svg>
@@ -151,6 +150,23 @@ export const ProductCard = ({ product }: ProductCardProps) => {
           </div>
         </div>
       </div>
+      {isStripeModalOpen && (
+        <div className="modal modal-open">
+          <div className="modal-box relative">
+            <button
+              className="btn btn-sm btn-circle absolute right-2 top-2"
+              onClick={() => setIsStripeModalOpen(false)}
+            >
+              ✕
+            </button>
+            <h3 className="font-bold text-lg mb-4">Complete Your Payment</h3>
+            <StripePaymentButton amount={product.price} />
+          </div>
+          <div className="modal-backdrop" onClick={() => setIsStripeModalOpen(false)}>
+            <button>close</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -6,7 +6,7 @@ import { loadStripe } from "@stripe/stripe-js";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
-const CheckoutForm = () => {
+const CheckoutForm = ({ amount }: { amount: bigint }) => {
   const stripe = useStripe();
   const elements = useElements();
   const [loading, setLoading] = useState(false);
@@ -74,24 +74,25 @@ const CheckoutForm = () => {
       <PaymentElement />
       {error && <div className="text-error text-sm mt-2">{error}</div>}
       <button type="submit" disabled={!stripe || loading} className="btn btn-primary mt-4 w-full">
-        {loading ? <span className="loading loading-spinner loading-sm"></span> : "Pay $0.55"}
+        {loading ? <span className="loading loading-spinner loading-sm"></span> : `Pay $${Number(amount) / 1e6}`}
       </button>
     </form>
   );
 };
 
-export const StripePaymentButton = () => {
+export const StripePaymentButton = ({ amount }: { amount: bigint }) => {
   const [clientSecret, setClientSecret] = useState<string>();
 
   useEffect(() => {
     fetch("/api/create-payment-intent", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ amount: Number(amount) / 1e6 }),
     })
       .then(res => res.json())
       .then(data => setClientSecret(data.clientSecret))
       .catch(err => console.error("Error:", err));
-  }, []);
+  }, [amount]);
 
   if (!clientSecret) {
     return (
@@ -111,7 +112,7 @@ export const StripePaymentButton = () => {
         },
       }}
     >
-      <CheckoutForm />
+      <CheckoutForm amount={amount} />
     </Elements>
   );
 };

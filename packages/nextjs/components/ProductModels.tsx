@@ -20,8 +20,7 @@ export interface CourseProduct extends BaseProduct {
   courseLevel: "beginner" | "intermediate" | "advanced";
   modules: string[];
   includesSupport: boolean;
-  maxDevices: number;
-  accessType: "lifetime" | "limited";
+  accessType: "Full Access" | "Limited Access";
   contentType: "video" | "text" | "interactive" | "hybrid";
 }
 

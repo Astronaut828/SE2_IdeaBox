@@ -17,9 +17,9 @@ export const HomeContent = () => {
   const sampleProducts = {
     digital: {
       id: BigInt(1),
-      name: "Web3 Development Toolkit Pro",
-      price: BigInt(1000000000000000000), // 1 ETH
-      body: "Complete suite of professional Web3 development tools, including smart contract templates, testing frameworks, and deployment scripts.",
+      name: "DigitalProduct / Download",
+      price: BigInt(200000000), // $200
+      body: "Option to offer content for download",
       downloadUrl: "https://example.com/web3-toolkit-pro",
       fileSize: "2.5GB",
       fileFormat: "ZIP",
@@ -28,40 +28,36 @@ export const HomeContent = () => {
 
     course: {
       id: BigInt(2),
-      name: "Mastering Blockchain Development",
-      price: BigInt(2000000000000000000), // 2 ETH
-      body: "Comprehensive blockchain development course covering everything from basic concepts to advanced DApp architecture.",
+      name: "Course / Access",
+      price: BigInt(300000000), // $ 300
+      body: "Option to offer access to a course for a limited time",
       accessDuration: 365, // 1 year access
       courseLevel: "advanced",
       modules: [
-        "Blockchain Fundamentals",
-        "Smart Contract Development",
-        "DApp Architecture",
-        "Web3 Integration",
-        "Security Best Practices",
-        "Testing & Deployment",
-        "Project Management",
+        "Includes video, text, and interactive content",
+        "Module 1: Introduction to Web3",
+        "Module 2: Smart Contracts",
+        "Module 3: Decentralized Applications",
+        "Module 4: Blockchain Security",
+        "Module 5: Advanced Topics",
       ],
       includesSupport: true,
-      maxDevices: 3,
-      accessType: "lifetime",
-      contentType: "hybrid", // Includes video, text, and interactive content
+      accessType: "Full Access",
+      contentType: "hybrid",
     } as CourseProduct,
 
     subscription: {
       id: BigInt(3),
-      name: "Web3 Developer Pro Suite",
-      price: BigInt(500000000000000000), // 0.5 ETH
-      body: "Professional subscription service for Web3 developers including premium tools, early access to new features, and dedicated support.",
+      name: "Subscription / Access",
+      price: BigInt(150000000), // $150
+      body: "Option to offer access to a subscription service for a limited time",
       billingCycle: "monthly",
       features: [
-        "24/7 Priority Support",
         "Early Access to New Features",
         "Premium Development Tools",
         "Monthly Workshop Access",
         "Private Discord Community",
         "Custom Smart Contract Templates",
-        "Advanced Analytics Dashboard",
       ],
       trialPeriodDays: 14,
       autoRenew: true,
@@ -109,8 +105,7 @@ export const HomeContent = () => {
           <span className="block text-4xl font-bold">IdeaBox</span>
         </h1>
         {/* Products */}
-        <div className="px-5 max-w-7xl w-full">
-          <h2 className="text-3xl font-bold mb-8">Our Products</h2>
+        <div className="px-5 max-w-7xl w-full mt-16">
           {/* All Products Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-fr">
             <ProductCard product={sampleProducts.digital} />

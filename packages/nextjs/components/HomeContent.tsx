@@ -2,79 +2,42 @@
 
 import Link from "next/link";
 import { ProductCard } from "./ProductCard";
-import { CourseProduct, DigitalProduct, SubscriptionProduct } from "./ProductModels";
-import { StripePaymentButton } from "./StripePaymentButton";
+import { sampleProducts } from "./SampleProducts";
 import { usePrivy } from "@privy-io/react-auth";
-import { useAccount } from "wagmi";
+// import { useAccount } from "wagmi";
 import { BugAntIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { UserAuth } from "~~/components/db";
 
 export const HomeContent = () => {
-  const { address: connectedAddress } = useAccount();
-  const { user, authenticated, ready } = usePrivy();
-
-  // Sample products data
-  const sampleProducts = {
-    digital: {
-      id: BigInt(1),
-      name: "DigitalProduct / Download",
-      price: BigInt(200000000), // $200
-      body: "Option to offer content for download",
-      downloadUrl: "https://example.com/web3-toolkit-pro",
-      fileSize: "2.5GB",
-      fileFormat: "ZIP",
-      licenseType: "commercial",
-    } as DigitalProduct,
-
-    course: {
-      id: BigInt(2),
-      name: "Course / Access",
-      price: BigInt(300000000), // $ 300
-      body: "Option to offer access to a course for a limited time",
-      accessDuration: 365, // 1 year access
-      courseLevel: "advanced",
-      modules: [
-        "Includes video, text, and interactive content",
-        "Module 1: Introduction to Web3",
-        "Module 2: Smart Contracts",
-        "Module 3: Decentralized Applications",
-        "Module 4: Blockchain Security",
-        "Module 5: Advanced Topics",
-      ],
-      includesSupport: true,
-      accessType: "Full Access",
-      contentType: "hybrid",
-    } as CourseProduct,
-
-    subscription: {
-      id: BigInt(3),
-      name: "Subscription / Access",
-      price: BigInt(150000000), // $150
-      body: "Option to offer access to a subscription service for a limited time",
-      billingCycle: "monthly",
-      features: [
-        "Early Access to New Features",
-        "Premium Development Tools",
-        "Monthly Workshop Access",
-        "Private Discord Community",
-        "Custom Smart Contract Templates",
-      ],
-      trialPeriodDays: 14,
-      autoRenew: true,
-      timeframe: {
-        purchaseDate: Date.now(),
-        startDate: Date.now(),
-        endDate: Date.now() + 30 * 24 * 60 * 60 * 1000, // 30 days from now
-        lastRenewalDate: Date.now(),
-      },
-    } as SubscriptionProduct,
-  };
+  const { user } = usePrivy();
 
   const renderUserDetails = () => {
     if (!user) return null;
 
+    // Extract Privy from linkedAccount
+    const simplifiedAccount = user?.linkedAccounts?.map(account => {
+      const baseAccount = {
+        address: "address" in account ? account.address : null,
+        type: account.type,
+        firstVerifiedAt: account.firstVerifiedAt,
+        latestVerifiedAt: account.latestVerifiedAt,
+      };
+
+      // Only add wallet-specific fields if they exist
+      if ("walletClientType" in account) {
+        return {
+          ...baseAccount,
+          walletClientType: account.walletClientType,
+          // Only add connectorType if it exists (for wallet accounts)
+          ...("connectorType" in account && { connectorType: account.connectorType }),
+        };
+      }
+
+      return baseAccount;
+    });
+
     return (
-      <div className="bg-base-200 p-6 rounded-lg mb-8 w-full max-w-4xl">
+      <div className="w-full max-w-4xl">
         <h2 className="text-xl font-semibold mb-4">Complete User Information</h2>
 
         {/* Raw User Data with Syntax Highlighting */}
@@ -82,11 +45,15 @@ export const HomeContent = () => {
           <pre className="text-sm whitespace-pre-wrap break-words">
             {JSON.stringify(
               {
-                user,
-                authenticated,
-                ready,
-                connectedAddress,
-                linkedAccounts: user?.linkedAccounts,
+                id: user?.id,
+                createdAt: user?.createdAt,
+                linkedAccounts: simplifiedAccount,
+                /// Full return data from Privy: ///
+                // user,
+                // authenticated,
+                // ready,
+                // connectedAddress,
+                // linkedAccount: user?.linkedAccounts, // Will keep this
               },
               null,
               2,
@@ -111,14 +78,6 @@ export const HomeContent = () => {
             <ProductCard product={sampleProducts.digital} />
             <ProductCard product={sampleProducts.course} />
             <ProductCard product={sampleProducts.subscription} />
-          </div>
-        </div>
-        {/* Stripe Payment Button */}
-        <div className="flex-grow bg-base-300 w-full mt-16 px-8 py-12 rounded-3xl">
-          <div className="flex justify-center items-center gap-12 flex-col sm:flex-row">
-            <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl">
-              <StripePaymentButton amount={sampleProducts.digital.price} />
-            </div>
           </div>
         </div>
         {/* Privy User Details */}

@@ -101,48 +101,61 @@ export const ProductCard = ({ product }: ProductCardProps) => {
 
   return (
     <div className="card bg-base-100 shadow-xl h-full hover:shadow-2xl transition-shadow duration-200">
-      <figure className="px-4 pt-4">
+      <figure className="px-3 sm:px-4 pt-3 sm:pt-4">
         <Image
           src="/software-box.jpg"
           alt={product.name}
           width={300}
           height={200}
-          className="rounded-lg w-full h-48 object-cover"
+          className="rounded-lg w-full h-36 sm:h-48 object-cover"
         />
       </figure>
-      <div className="card-body p-4 gap-2">
+      <div className="card-body p-3 sm:p-4 gap-2">
         <div className="flex justify-between items-start">
-          <h2 className="card-title text-lg">{product.name}</h2>
+          <h2 className="card-title text-base sm:text-lg">{product.name}</h2>
         </div>
 
-        <p className="text-sm text-neutral line-clamp-2">{product.body}</p>
+        <p className="text-xs sm:text-sm text-neutral line-clamp-2">{product.body}</p>
 
-        <div className="divider my-1"></div>
+        <div className="divider my-0.5 sm:my-1"></div>
 
         <div className="space-y-1">{renderProductDetails()}</div>
 
-        <div className="card-actions flex-col gap-2 mt-2">
-          <div className="flex justify-between items-center w-full px-6">
-            <span className="text-lg font-bold text-base-content">{formatPrice(product.price)}</span>
-            <button className="btn btn-primary btn-sm">View Details</button>
+        <div className="card-actions flex-col gap-2 mt-auto">
+          <div className="flex justify-between items-center w-full px-2 sm:px-4">
+            <span className="text-base sm:text-lg font-bold text-base-content">{formatPrice(product.price)}</span>
+            <button className="btn btn-primary btn-xs sm:btn-sm">View Details</button>
           </div>
 
-          <div className="divider my-1"></div>
+          <div className="divider my-0.5 sm:my-1"></div>
 
-          <div className="flex justify-center gap-6 w-full px-6">
-            <button className="btn btn-primary btn-sm" onClick={() => setIsStripeModalOpen(true)}>
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+          <div className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-4 w-full px-2 sm:px-4">
+            <button
+              className="btn btn-primary btn-xs sm:btn-sm h-auto min-h-[2rem] sm:min-h-[2.5rem] flex items-center justify-center gap-2"
+              onClick={() => setIsStripeModalOpen(true)}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-3 w-3 sm:h-4 sm:w-4 shrink-0"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
                 <path d="M4 3h16a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zm1 2v14h14V5H5zm2 6h10v2H7v-2z" />
               </svg>
               Pay with Card
             </button>
             <button
-              className="btn btn-primary btn-sm"
+              className="btn btn-primary btn-xs sm:btn-sm h-auto min-h-[2rem] sm:min-h-[2.5rem] flex items-center justify-center gap-2"
               onClick={() => {
                 /* Crypto payment handler */
               }}
             >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-3 w-3 sm:h-4 sm:w-4 shrink-0"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
                 <path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-1-9.5v5l3-2.5-3-2.5zm-2 0l-3 2.5 3 2.5v-5z" />
               </svg>
               Pay with USDC
@@ -152,14 +165,16 @@ export const ProductCard = ({ product }: ProductCardProps) => {
       </div>
       {isStripeModalOpen && (
         <div className="modal modal-open">
-          <div className="modal-box relative">
+          <div className="modal-box relative w-11/12 max-w-lg">
             <button
-              className="btn btn-sm btn-circle absolute right-2 top-2"
+              className="btn btn-sm btn-circle absolute right-2 top-2 z-20"
               onClick={() => setIsStripeModalOpen(false)}
             >
               ✕
             </button>
-            <StripePaymentButton amount={product.price} />
+            <div className="relative z-10 overflow-hidden">
+              <StripePaymentButton amount={product.price} />
+            </div>
           </div>
           <div className="modal-backdrop" onClick={() => setIsStripeModalOpen(false)}>
             <button>close</button>

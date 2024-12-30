@@ -98,16 +98,16 @@ export const HomeContent = () => {
   };
 
   return (
-    <div className="flex items-center flex-col flex-grow pt-10">
-      <div className="px-5">
-        <h1 className="text-center">
-          <span className="block text-2xl mb-2">Welcome to</span>
-          <span className="block text-4xl font-bold">IdeaBox</span>
+    <div className="flex items-center flex-col flex-grow pt-5 sm:pt-10">
+      <div className="px-2 sm:px-5 w-full">
+        <h1 className="text-center mb-8">
+          <span className="block text-xl sm:text-2xl mb-2">Welcome to</span>
+          <span className="block text-3xl sm:text-4xl font-bold">IdeaBox</span>
         </h1>
         {/* Products */}
-        <div className="px-5 max-w-7xl w-full mt-16">
+        <div className="w-full max-w-7xl mx-auto mt-8 sm:mt-16">
           {/* All Products Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-fr">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 px-2 sm:px-6">
             <ProductCard product={sampleProducts.digital} />
             <ProductCard product={sampleProducts.course} />
             <ProductCard product={sampleProducts.subscription} />

@@ -57,10 +57,14 @@ const CheckoutForm = ({ amount }: { amount: bigint }) => {
 
   if (status === "succeeded") {
     return (
-      <div className="text-center p-6">
-        <Confetti width={width} height={height} recycle={false} numberOfPieces={800} gravity={0.2} />
-        <h3 className="text-2xl font-bold text-success mb-4">Payment Successful!</h3>
-        <p className="text-sm mb-4">Thank you for your purchase!</p>
+      <div className="relative text-center min-h-[200px] w-full">
+        <div className="absolute inset-0">
+          <Confetti width={width} height={height} recycle={false} numberOfPieces={800} gravity={0.2} />
+        </div>
+        <div className="relative z-10 py-8">
+          <h3 className="text-2xl font-bold text-success mb-4">Payment Successful!</h3>
+          <p className="text-sm mb-4">Thank you for your purchase!</p>
+        </div>
       </div>
     );
   }

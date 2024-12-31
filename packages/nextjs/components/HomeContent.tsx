@@ -14,51 +14,14 @@ export const HomeContent = () => {
   const renderUserDetails = () => {
     if (!user) return null;
 
-    // Extract Privy from linkedAccount
-    const simplifiedAccount = user?.linkedAccounts?.map(account => {
-      const baseAccount = {
-        address: "address" in account ? account.address : null,
-        type: account.type,
-        firstVerifiedAt: account.firstVerifiedAt,
-        latestVerifiedAt: account.latestVerifiedAt,
-      };
-
-      // Only add wallet-specific fields if they exist
-      if ("walletClientType" in account) {
-        return {
-          ...baseAccount,
-          walletClientType: account.walletClientType,
-          // Only add connectorType if it exists (for wallet accounts)
-          ...("connectorType" in account && { connectorType: account.connectorType }),
-        };
-      }
-
-      return baseAccount;
-    });
-
     return (
-      <div className="w-full max-w-4xl">
-        <h2 className="text-xl font-semibold mb-4">Complete User Information</h2>
-
-        {/* Raw User Data with Syntax Highlighting */}
-        <div className="bg-base-100 rounded-lg p-4 overflow-x-auto">
-          <pre className="text-sm whitespace-pre-wrap break-words">
-            {JSON.stringify(
-              {
-                id: user?.id,
-                createdAt: user?.createdAt,
-                linkedAccounts: simplifiedAccount,
-                /// Full return data from Privy: ///
-                // user,
-                // authenticated,
-                // ready,
-                // connectedAddress,
-                // linkedAccount: user?.linkedAccounts, // Will keep this
-              },
-              null,
-              2,
-            )}
-          </pre>
+      <div className="p-5 bg-base-100 border border-base-300 rounded-lg shadow-md w-full">
+        <h2 className="text-xl font-semibold mb-4">Current User</h2>
+        <div className="space-y-2">
+          <p>
+            <span className="font-medium">Privy ID: </span>
+            {user.id}
+          </p>
         </div>
       </div>
     );
@@ -80,13 +43,12 @@ export const HomeContent = () => {
             <ProductCard product={sampleProducts.subscription} />
           </div>
         </div>
-        {/* Privy User Details */}
-        <div className="flex-grow bg-base-300 w-full mt-16 px-8 py-12 rounded-3xl">
-          <div className="flex justify-center items-center gap-12 flex-col sm:flex-row">{renderUserDetails()}</div>
-        </div>
-
         {/* Redis */}
         <div className="flex-grow bg-base-300 w-full mt-16 px-8 py-12 rounded-3xl">
+          {/* Privy User Details */}
+          <div className="flex justify-center items-center gap-12 flex-col sm:flex-row pb-10">
+            {renderUserDetails()}
+          </div>
           <UserAuth />
         </div>
         {/* SE2 */}

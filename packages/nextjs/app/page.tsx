@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { HomeContent } from "../components/HomeContent";
 import { usePrivy } from "@privy-io/react-auth";
-import { LoginButton } from "~~/components/auth";
+import { Button } from "~~/components/auth";
 
 const Home = () => {
   const { ready, authenticated } = usePrivy();
@@ -29,7 +29,7 @@ const Home = () => {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <h1 className="text-4xl font-bold mb-8">Welcome to IdeaBox</h1>
-          <LoginButton />
+          <Button />
         </div>
       </div>
     );

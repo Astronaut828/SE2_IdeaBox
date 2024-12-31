@@ -1,13 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePrivy } from "@privy-io/react-auth";
 import { Elements, PaymentElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import Confetti from "react-confetti";
+import { PaymentDetail, db } from "~~/utils/upstash_db";
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
 const CheckoutForm = ({ amount }: { amount: bigint }) => {
+  const { user } = usePrivy();
   const stripe = useStripe();
   const elements = useElements();
   const [loading, setLoading] = useState(false);
@@ -17,6 +20,35 @@ const CheckoutForm = ({ amount }: { amount: bigint }) => {
 
   const width = window.innerWidth * 2;
   const height = window.innerHeight * 2;
+
+  const handlePaymentSuccess = async (paymentIntent: any) => {
+    if (!user) return;
+
+    try {
+      const userData = await db.readUser(user.id);
+      if (!userData) return;
+
+      const paymentDetail: PaymentDetail = {
+        id: paymentIntent.id,
+        amount: paymentIntent.amount / 100,
+        currency: paymentIntent.currency,
+        status: paymentIntent.status,
+        type: "stripe",
+        timestamp: new Date(paymentIntent.created * 1000),
+        subscriptionEndsAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+        subscriptionId: "",
+        subscription: false,
+        productId: "",
+        productDownloaded: false,
+      };
+      // Add the payment detail to the user's payments array at [0]
+      userData.payments.unshift(paymentDetail);
+      userData.payed = true;
+      await db.writeUser(user.id, userData);
+    } catch (error) {
+      console.error("Error updating user payment data:", error);
+    }
+  };
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -47,6 +79,7 @@ const CheckoutForm = ({ amount }: { amount: bigint }) => {
       if (paymentIntent.status === "succeeded") {
         setStatus("succeeded");
         setPaymentData(paymentIntent);
+        await handlePaymentSuccess(paymentIntent);
       }
     } catch (e: any) {
       setError(e.message || "An error occurred");

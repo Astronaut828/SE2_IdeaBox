@@ -9,7 +9,7 @@ const Button: React.FC = () => {
 
   return (
     <button
-      className="btn btn-primary btn-lg px-8 py-4 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
+      className="btn btn-primary btn-lg px-4 sm:px-8 py-4 text-base sm:text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
       onClick={login}
       disabled={disableLogin}
     >
@@ -17,10 +17,11 @@ const Button: React.FC = () => {
         <span className="loading loading-spinner loading-md"></span>
       ) : (
         <>
-          <span>Login with your email or wallet of choice</span>
+          <span className="hidden sm:inline">Login with your email or wallet of choice</span>
+          <span className="sm:hidden">Login with email/wallet</span>
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6 ml-2"
+            className="h-5 w-5 sm:h-6 sm:w-6 ml-2"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"

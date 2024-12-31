@@ -18,10 +18,10 @@ export const HomeContent = () => {
       <div className="p-5 bg-base-100 border border-base-300 rounded-lg shadow-md w-full">
         <h2 className="text-xl font-semibold mb-4">Current User</h2>
         <div className="space-y-2">
-          <p>
-            <span className="font-medium">Privy ID: </span>
-            {user.id}
-          </p>
+          <div className="flex flex-col sm:flex-row gap-2">
+            <span className="font-medium whitespace-nowrap">Privy ID: </span>
+            <span className="text-sm my-auto">{user.id}</span>
+          </div>
         </div>
       </div>
     );

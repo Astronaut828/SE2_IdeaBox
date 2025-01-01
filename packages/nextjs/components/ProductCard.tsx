@@ -2,6 +2,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { CourseProduct, DigitalProduct, SubscriptionProduct } from "./ProductModels";
 import { StripePaymentButton } from "./StripePaymentButton";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 interface ProductCardProps {
   product: DigitalProduct | CourseProduct | SubscriptionProduct;
@@ -144,22 +145,26 @@ export const ProductCard = ({ product }: ProductCardProps) => {
               </svg>
               Pay with Card
             </button>
-            <button
-              className="btn btn-primary btn-xs sm:btn-sm h-auto min-h-[2rem] sm:min-h-[2.5rem] flex items-center justify-center gap-2"
-              onClick={() => {
-                /* Crypto payment handler */
-              }}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-3 w-3 sm:h-4 sm:w-4 shrink-0"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-              >
-                <path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-1-9.5v5l3-2.5-3-2.5zm-2 0l-3 2.5 3 2.5v-5z" />
-              </svg>
-              Pay with USDC
-            </button>
+
+            <ConnectButton.Custom>
+              {({ openConnectModal }) => (
+                <button
+                  className="btn btn-primary btn-xs sm:btn-sm h-auto min-h-[2rem] sm:min-h-[2.5rem] flex items-center justify-center gap-2"
+                  onClick={openConnectModal}
+                  type="button"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-3 w-3 sm:h-4 sm:w-4 shrink-0"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-1-9.5v5l3-2.5-3-2.5zm-2 0l-3 2.5 3 2.5v-5z" />
+                  </svg>
+                  Pay with USDC
+                </button>
+              )}
+            </ConnectButton.Custom>
           </div>
         </div>
       </div>

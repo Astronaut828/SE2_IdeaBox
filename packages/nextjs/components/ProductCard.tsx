@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Image from "next/image";
+import { PaymentModal } from "./PaymentModal";
 import { CourseProduct, DigitalProduct, SubscriptionProduct } from "./ProductModels";
 import { StripePaymentButton } from "./StripePaymentButton";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
@@ -99,6 +100,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
   };
 
   const [isStripeModalOpen, setIsStripeModalOpen] = useState(false);
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
 
   return (
     <div className="card bg-base-100 shadow-xl h-full hover:shadow-2xl transition-shadow duration-200">
@@ -147,10 +149,20 @@ export const ProductCard = ({ product }: ProductCardProps) => {
             </button>
 
             <ConnectButton.Custom>
-              {({ openConnectModal }) => (
+              {({ openConnectModal, account }) => (
                 <button
                   className="btn btn-primary btn-xs sm:btn-sm h-auto min-h-[2rem] sm:min-h-[2.5rem] flex items-center justify-center gap-2"
-                  onClick={openConnectModal}
+                  onClick={async () => {
+                    if (!account?.address) {
+                      await openConnectModal();
+                      // Use a slight delay to allow account state to update
+                      setTimeout(() => {
+                        setIsPaymentModalOpen(true);
+                      }, 500);
+                    } else {
+                      setIsPaymentModalOpen(true);
+                    }
+                  }}
                   type="button"
                 >
                   <svg
@@ -186,6 +198,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
           </div>
         </div>
       )}
+      <PaymentModal isOpen={isPaymentModalOpen} onClose={() => setIsPaymentModalOpen(false)} amount={product.price} />
     </div>
   );
 };

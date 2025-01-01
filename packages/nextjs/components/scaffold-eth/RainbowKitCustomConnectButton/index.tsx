@@ -1,15 +1,19 @@
 "use client";
 
 // @refresh reset
+import { useEffect } from "react";
 import { Balance } from "../Balance";
 import { AddressInfoDropdown } from "./AddressInfoDropdown";
 import { AddressQRCodeModal } from "./AddressQRCodeModal";
 import { WrongNetworkDropdown } from "./WrongNetworkDropdown";
+import { usePrivy } from "@privy-io/react-auth";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { Address } from "viem";
+import { useAccount } from "wagmi";
 import { useNetworkColor } from "~~/hooks/scaffold-eth";
 import { useTargetNetwork } from "~~/hooks/scaffold-eth/useTargetNetwork";
 import { getBlockExplorerAddressLink } from "~~/utils/scaffold-eth";
+import { db } from "~~/utils/upstash_db";
 
 /**
  * Custom Wagmi Connect Button (watch balance + custom design)
@@ -17,6 +21,28 @@ import { getBlockExplorerAddressLink } from "~~/utils/scaffold-eth";
 export const RainbowKitCustomConnectButton = () => {
   const networkColor = useNetworkColor();
   const { targetNetwork } = useTargetNetwork();
+  const { address, isConnected, connector } = useAccount();
+  const { user } = usePrivy();
+
+  useEffect(() => {
+    const handleWalletConnection = async () => {
+      if (isConnected && address && user) {
+        const walletInfo = {
+          address,
+          isConnected,
+          walletClientType: connector?.id || "injected",
+          connectorType: connector?.name?.toLowerCase() || "injected",
+        };
+
+        // Add wallet to user's account with wallet type info
+        await db.addWalletToUser(user.id, address, walletInfo);
+      }
+    };
+
+    if (isConnected && address && user) {
+      handleWalletConnection();
+    }
+  }, [isConnected, address, user, connector]);
 
   return (
     <ConnectButton.Custom>

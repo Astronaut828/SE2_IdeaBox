@@ -40,6 +40,7 @@ export interface LinkedAccount {
   latestVerifiedAt: Date | null;
   walletClientType?: string;
   connectorType?: string;
+  isDefaultWallet?: boolean;
 }
 
 export interface PrivyData {
@@ -71,7 +72,7 @@ export interface User {
 
 export const db = {
   // Enter new user to database
-  async writeUser(key: string, user: User) {
+  writeUser: async (key: string, user: User): Promise<string | null> => {
     try {
       // Convert dates to ISO strings before saving
       const serializedUser = {
@@ -100,7 +101,7 @@ export const db = {
   },
 
   // Read user from database
-  async readUser(key: string): Promise<User | null> {
+  readUser: async (key: string): Promise<User | null> => {
     try {
       const userData = await redis.get<string>(key);
       if (!userData) return null;
@@ -132,6 +133,56 @@ export const db = {
       };
     } catch (error) {
       console.error("Read error:", error);
+      throw error;
+    }
+  },
+
+  addWalletToUser: async (
+    userId: string,
+    walletAddress: string,
+    walletInfo?: {
+      walletClientType?: string;
+      connectorType?: string;
+    },
+  ): Promise<User | null> => {
+    try {
+      const userData = await db.readUser(userId);
+      if (!userData) return null;
+
+      // Check if wallet already exists
+      const walletExists = userData.privy.linkedAccounts.some(
+        (account: LinkedAccount) => account.type === "wallet" && account.address === walletAddress,
+      );
+
+      if (walletExists) {
+        // If wallet exists, just update isDefaultWallet flags
+        userData.privy.linkedAccounts = userData.privy.linkedAccounts.map((account: LinkedAccount) => ({
+          ...account,
+          isDefaultWallet: account.type === "wallet" && account.address === walletAddress,
+        }));
+      } else {
+        // Set all existing accounts' isDefaultWallet to false
+        userData.privy.linkedAccounts = userData.privy.linkedAccounts.map((account: LinkedAccount) => ({
+          ...account,
+          isDefaultWallet: false,
+        }));
+
+        // Add new wallet with isDefaultWallet set to true and use provided wallet info
+        userData.privy.linkedAccounts.push({
+          address: walletAddress,
+          type: "wallet",
+          firstVerifiedAt: new Date(),
+          latestVerifiedAt: new Date(),
+          walletClientType: walletInfo?.walletClientType || "injected",
+          connectorType: walletInfo?.connectorType || "injected",
+          isDefaultWallet: true,
+        });
+      }
+
+      await db.writeUser(userId, userData);
+      return userData;
+    } catch (error) {
+      console.error("Error adding wallet to user:", error);
       throw error;
     }
   },

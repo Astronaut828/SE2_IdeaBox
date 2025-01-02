@@ -14,8 +14,49 @@ export default function LoginPage() {
     const handleUserAuth = async () => {
       if (ready && authenticated && user) {
         try {
-          // Check if user exists in database using Privy ID
-          const existingUser = await db.readUser(user.id);
+          // First check if user exists by Privy ID
+          let existingUser = await db.readUser(user.id);
+
+          // If no user found, check for matching accounts
+          if (!existingUser) {
+            const injectedWallets = user.linkedAccounts.filter(
+              account =>
+                account.type === "wallet" &&
+                "address" in account &&
+                ("walletClientType" in account || "connectorType" in account),
+            );
+
+            // Check for email accounts
+            const emailAccounts = user.linkedAccounts.filter(
+              account => account.type === "email" && "address" in account,
+            );
+
+            const keys = await db.getAllKeys();
+
+            for (const key of keys) {
+              const userData = await db.readUser(key);
+              if (!userData) continue;
+
+              // Check for matching wallet or email
+              const hasMatchingAccount = userData.privy.linkedAccounts.some(dbAccount =>
+                [...injectedWallets, ...emailAccounts].some(
+                  userAccount =>
+                    "address" in userAccount &&
+                    dbAccount.address === userAccount.address &&
+                    ((dbAccount.type === "wallet" && dbAccount.connectorType !== "embedded") ||
+                      dbAccount.type === "email"),
+                ),
+              );
+
+              if (hasMatchingAccount) {
+                // Update the existing user's Privy ID
+                userData.privy.id = user.id;
+                await db.writeUser(user.id, userData);
+                existingUser = userData;
+                break;
+              }
+            }
+          }
 
           if (!existingUser) {
             // Create new user with updated structure
@@ -40,8 +81,6 @@ export default function LoginPage() {
             };
 
             await db.writeUser(user.id, newUser);
-          } else {
-            console.log("User already exists in database");
           }
 
           router.push("/");

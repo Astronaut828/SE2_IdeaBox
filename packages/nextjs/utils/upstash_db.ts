@@ -186,4 +186,38 @@ export const db = {
       throw error;
     }
   },
+
+  readUserByInjectedWallet: async (walletAddress: string): Promise<User | null> => {
+    try {
+      const keys = await redis.keys("*");
+
+      for (const key of keys) {
+        const userData = await db.readUser(key);
+        if (!userData) continue;
+
+        // Check if any of the user's linked accounts match the injected wallet
+        const hasMatchingWallet = userData.privy.linkedAccounts.some(
+          account =>
+            account.type === "wallet" && account.address === walletAddress && account.connectorType !== "embedded",
+        );
+
+        if (hasMatchingWallet) {
+          return userData;
+        }
+      }
+      return null;
+    } catch (error) {
+      console.error("Read user by injected wallet error:", error);
+      throw error;
+    }
+  },
+
+  getAllKeys: async (): Promise<string[]> => {
+    try {
+      return await redis.keys("*");
+    } catch (error) {
+      console.error("Get all keys error:", error);
+      throw error;
+    }
+  },
 };

@@ -98,11 +98,11 @@ const CheckoutForm = ({ amount }: { amount: bigint }) => {
             width={width}
             height={height}
             recycle={false}
-            numberOfPieces={2000}
-            gravity={0.4}
+            numberOfPieces={1200}
+            gravity={0.2}
             drawShape={(ctx: CanvasRenderingContext2D) => {
               ctx.beginPath();
-              ctx.arc(0, 0, 18, 0, 12 * Math.PI);
+              ctx.arc(0, 0, 15, 0, 10 * Math.PI);
               ctx.fill();
             }}
             style={{ position: "fixed", top: 0, left: 0, width: "100%", height: "100%", pointerEvents: "none" }}

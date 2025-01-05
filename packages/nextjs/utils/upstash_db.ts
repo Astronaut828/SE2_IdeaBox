@@ -16,16 +16,21 @@ const redis = new Redis({
 // Function to test Redis connection
 export const testRedisConnection = async () => {
   try {
-    const testKey = "test:key";
-    const testValue = "testValue";
+    const testKey = "_test_connection";
+    const testValue = { test: "value" };
 
     await redis.set(testKey, testValue);
-    const retrievedValue = await redis.get<string>(testKey);
+    const retrievedValue = await redis.get<{ test: string }>(testKey);
 
-    if (retrievedValue === testValue) {
+    // Clean up test key
+    await redis.del(testKey);
+
+    if (retrievedValue?.test === testValue.test) {
       console.log("Redis connection is working correctly.");
     } else {
       console.error("Redis connection test failed: Retrieved value does not match.");
+      console.log("Expected:", testValue);
+      console.log("Received:", retrievedValue);
     }
   } catch (error) {
     console.error("Redis connection test failed:", error);
@@ -106,11 +111,15 @@ export const db = {
       const userData = await redis.get<string>(key);
       if (!userData) return null;
 
+      // Skip if the value is the test value
+      if (userData === "testValue") return null;
+
       let parsedUser;
-      if (typeof userData === "string") {
-        parsedUser = JSON.parse(userData);
-      } else {
-        parsedUser = userData;
+      try {
+        parsedUser = typeof userData === "string" ? JSON.parse(userData) : userData;
+      } catch (error) {
+        console.error("Parse error:", error);
+        return null;
       }
 
       // Convert ISO strings back to Date objects
@@ -133,7 +142,7 @@ export const db = {
       };
     } catch (error) {
       console.error("Read error:", error);
-      throw error;
+      return null;
     }
   },
 

@@ -8,7 +8,7 @@ import { useAccount } from "wagmi";
 import { useSwitchChain } from "wagmi";
 import { DocumentDuplicateIcon } from "@heroicons/react/24/outline";
 import { useUSDCBalance } from "~~/hooks/useUSDCBalance";
-import { MERCHANT_ADDRESS, USDC_ADDRESSES, useUSDCTransfer } from "~~/hooks/useUSDCTransfer";
+import { MERCHANT_ADDRESS, useUSDCTransfer } from "~~/hooks/useUSDCTransfer";
 import { NETWORK_CONFIG } from "~~/utils/networks";
 import { notification } from "~~/utils/scaffold-eth";
 import { PaymentDetail, db } from "~~/utils/upstash_db";
@@ -20,17 +20,16 @@ interface PaymentModalProps {
 }
 
 export const PaymentModal = ({ isOpen, onClose, amount }: PaymentModalProps) => {
-  const { address } = useAccount();
-  const { user } = usePrivy();
+  const { address, chain } = useAccount();
+  const { switchChain } = useSwitchChain();
+  const usdcBalance = useUSDCBalance(address);
   const { transferUSDC } = useUSDCTransfer();
+  const { user } = usePrivy();
   const [isLoading, setIsLoading] = useState(false);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [transactionData, setTransactionData] = useState<any>(null);
   const publicClient = usePublicClient();
-  const { chain } = useAccount();
-  const { switchChain } = useSwitchChain();
   const [selectedNetwork, setSelectedNetwork] = useState<number>(chain?.id || 1);
-  const usdcBalance = useUSDCBalance(address, selectedNetwork);
 
   // Reset states when modal is opened
   useEffect(() => {
@@ -124,7 +123,7 @@ export const PaymentModal = ({ isOpen, onClose, amount }: PaymentModalProps) => 
       </div>
       <div className="text-s text-red-600 break-all">
         <p>TESTING: USDC ADDRESS</p>
-        {USDC_ADDRESSES[selectedNetwork] || "Not supported on this network"}
+        {NETWORK_CONFIG[selectedNetwork]?.usdcAddress || "Not supported on this network"}
       </div>
     </div>
   );
@@ -139,11 +138,11 @@ export const PaymentModal = ({ isOpen, onClose, amount }: PaymentModalProps) => 
               width={width}
               height={height}
               recycle={false}
-              numberOfPieces={2000}
-              gravity={0.4}
+              numberOfPieces={1200}
+              gravity={0.2}
               drawShape={(ctx: CanvasRenderingContext2D) => {
                 ctx.beginPath();
-                ctx.arc(0, 0, 18, 0, 12 * Math.PI);
+                ctx.arc(0, 0, 15, 0, 10 * Math.PI);
                 ctx.fill();
               }}
               style={{ position: "fixed", top: 0, left: 0, width: "100%", height: "100%", pointerEvents: "none" }}
@@ -233,42 +232,43 @@ export const PaymentModal = ({ isOpen, onClose, amount }: PaymentModalProps) => 
         <div className="space-y-4">
           <div className="bg-base-100 border border-base-300 rounded-3xl px-6 py-4 space-y-3">
             <div className="flex flex-col gap-3">
-              <div className="flex justify-between items-center">
-                <span className="text-sm font-bold">Amount:</span>
-                <span className="text-xl font-bold">{formatUnits(amount, 6)} USDC</span>
+              <div className="flex justify-between items-center border-b border-base-300 pb-3">
+                <span className="text-sm font-bold">Product Price:</span>
+                <div className="flex items-center">
+                  <span className="text-2xl font-bold">{formatUnits(amount, 6)}</span>
+                  <span className="ml-2 text-sm opacity-70">USDC</span>
+                </div>
               </div>
 
               <div className="flex flex-col gap-1">
-                <span className="text-sm font-bold">From:</span>
-                <div className="flex flex-col gap-1">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-mono">
-                      {address?.slice(0, 8)}...{address?.slice(-4)}
-                    </span>
-                    <span className="btn btn-sm btn-ghost flex flex-col font-normal items-center hover:bg-transparent text-sm">
-                      {usdcBalance} USDC
-                    </span>
+                <span className="text-sm font-bold">Connected Wallet (Balance):</span>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm font-mono">
+                    {address?.slice(0, 8)}...{address?.slice(-4)}
+                  </span>
+                  <div className="flex items-center">
+                    <span className="text-sm">{usdcBalance}</span>
+                    <span className="ml-2 text-sm opacity-70">USDC</span>
                   </div>
                 </div>
               </div>
 
               <div className="flex flex-col gap-1">
-                <span className="text-sm font-bold">To:</span>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-mono">
-                    {MERCHANT_ADDRESS.slice(0, 8)}...{MERCHANT_ADDRESS.slice(-4)}
-                  </span>
+                <span className="text-sm font-bold">Merchant Wallet:</span>
+                <span className="text-sm font-mono">
+                  {MERCHANT_ADDRESS.slice(0, 8)}...{MERCHANT_ADDRESS.slice(-4)}
+                </span>
+              </div>
+
+              <div className="flex flex-col gap-1 border-t border-base-300 pt-3">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm font-bold">Network:</span>
+                  <span className="text-sm">{chain?.name || "Not Connected"}</span>
                 </div>
-              </div>
-
-              <div className="flex flex-col gap-1">
-                <span className="text-sm font-bold">Network:</span>
-                <span className="text-sm">{publicClient?.chain.name || "Unknown Network"}</span>
-              </div>
-
-              <div className="flex flex-col gap-1">
-                <span className="text-sm font-bold">Token:</span>
-                <span className="text-sm">USDC (USD Coin)</span>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm font-bold">Token:</span>
+                  <span className="text-sm">USDC (USD Coin)</span>
+                </div>
               </div>
             </div>
           </div>

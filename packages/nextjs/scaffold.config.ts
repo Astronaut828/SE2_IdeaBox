@@ -19,7 +19,8 @@ const scaffoldConfig = {
     chains.polygon,
     chains.arbitrum,
     chains.base,
-    // Add other networks
+    chains.avalanche,
+    chains.bsc,
   ],
 
   // The interval at which your front-end polls the RPC servers for new data

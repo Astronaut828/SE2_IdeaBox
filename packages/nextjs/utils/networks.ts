@@ -1,5 +1,5 @@
 import { Chain } from "viem";
-import { arbitrum, avalanche, base, bsc, fantom, gnosis, mainnet, optimism, polygon } from "viem/chains";
+import { arbitrum, avalanche, base, bsc, fantom, mainnet, optimism, polygon } from "viem/chains";
 
 export type NetworkConfig = {
   chainId: number;
@@ -83,15 +83,6 @@ export const NETWORK_CONFIG: { [chainId: number]: NetworkConfig } = {
     blockExplorer: "https://ftmscan.com/",
     usdcAddress: "0x04068DA6C83AFCFA0e13ba15A6696662335D5B75",
     color: "#1969FF",
-  },
-  [gnosis.id]: {
-    chainId: gnosis.id,
-    viemChain: gnosis,
-    label: "Gnosis",
-    rpcUrl: "https://rpc.gnosischain.com/",
-    blockExplorer: "https://gnosisscan.io/",
-    usdcAddress: "0xDDAfbb505ad214D7b80b1f830fcCc89B60fb7A83",
-    color: "#48A9A6",
   },
 };
 

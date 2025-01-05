@@ -1,4 +1,6 @@
 import * as chains from "viem/chains";
+import { useAccount } from "wagmi";
+import { NETWORK_CONFIG } from "~~/utils/networks";
 
 export type ScaffoldConfig = {
   targetNetworks: readonly chains.Chain[];
@@ -11,8 +13,14 @@ export type ScaffoldConfig = {
 export const DEFAULT_ALCHEMY_API_KEY = "oKxs-03sij-U_N0iOlrSsZFr29-IqbuF";
 
 const scaffoldConfig = {
-  // The networks on which your DApp is live
-  targetNetworks: [chains.hardhat],
+  targetNetworks: [
+    chains.mainnet,
+    chains.optimism,
+    chains.polygon,
+    chains.arbitrum,
+    chains.base,
+    // Add other networks
+  ],
 
   // The interval at which your front-end polls the RPC servers for new data
   // it has no effect if you only target the local network (default is 4000)
@@ -35,3 +43,9 @@ const scaffoldConfig = {
 } as const satisfies ScaffoldConfig;
 
 export default scaffoldConfig;
+
+export const useUSDCTransfer = () => {
+  const { chain } = useAccount();
+  const usdcAddress = chain?.id ? NETWORK_CONFIG[chain.id]?.usdcAddress : undefined;
+  return { usdcAddress };
+};

@@ -5,10 +5,11 @@ import CopyToClipboard from "react-copy-to-clipboard";
 import { formatUnits } from "viem";
 import { usePublicClient } from "wagmi";
 import { useAccount } from "wagmi";
+import { useSwitchChain } from "wagmi";
 import { DocumentDuplicateIcon } from "@heroicons/react/24/outline";
-import { Balance } from "~~/components/scaffold-eth";
-import { useUSDCTransfer } from "~~/hooks/useUSDCTransfer";
-import { MERCHANT_ADDRESS } from "~~/hooks/useUSDCTransfer";
+import { useUSDCBalance } from "~~/hooks/useUSDCBalance";
+import { MERCHANT_ADDRESS, USDC_ADDRESSES, useUSDCTransfer } from "~~/hooks/useUSDCTransfer";
+import { NETWORK_CONFIG } from "~~/utils/networks";
 import { notification } from "~~/utils/scaffold-eth";
 import { PaymentDetail, db } from "~~/utils/upstash_db";
 
@@ -26,6 +27,10 @@ export const PaymentModal = ({ isOpen, onClose, amount }: PaymentModalProps) => 
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [transactionData, setTransactionData] = useState<any>(null);
   const publicClient = usePublicClient();
+  const { chain } = useAccount();
+  const { switchChain } = useSwitchChain();
+  const [selectedNetwork, setSelectedNetwork] = useState<number>(chain?.id || 1);
+  const usdcBalance = useUSDCBalance(address, selectedNetwork);
 
   // Reset states when modal is opened
   useEffect(() => {
@@ -43,6 +48,11 @@ export const PaymentModal = ({ isOpen, onClose, amount }: PaymentModalProps) => 
 
   const handlePayment = async () => {
     if (!user || !address || !publicClient) return;
+
+    if (!NETWORK_CONFIG[chain?.id || 0]) {
+      notification.error("Please select a supported network");
+      return;
+    }
 
     setIsLoading(true);
     try {
@@ -88,6 +98,36 @@ export const PaymentModal = ({ isOpen, onClose, amount }: PaymentModalProps) => 
       setIsLoading(false);
     }
   };
+
+  const handleNetworkChange = async (networkId: number) => {
+    if (switchChain) {
+      await switchChain({ chainId: networkId });
+      setSelectedNetwork(networkId);
+    }
+  };
+
+  const networkSelector = (
+    <div className="flex flex-col gap-2 mb-4">
+      <label className="text-sm font-bold opacity-80">Network</label>
+      <div className="relative">
+        <select
+          className="select select-ghost w-full bg-base-100 border border-base-300 rounded-3xl font-medium text-sm"
+          value={selectedNetwork}
+          onChange={e => handleNetworkChange(Number(e.target.value))}
+        >
+          {Object.values(NETWORK_CONFIG).map(network => (
+            <option key={network.chainId} value={network.chainId} className="bg-base-100">
+              {network.label}
+            </option>
+          ))}
+        </select>
+      </div>
+      <div className="text-s text-red-600 break-all">
+        <p>TESTING: USDC ADDRESS</p>
+        {USDC_ADDRESSES[selectedNetwork] || "Not supported on this network"}
+      </div>
+    </div>
+  );
 
   if (paymentSuccess) {
     return (
@@ -188,6 +228,8 @@ export const PaymentModal = ({ isOpen, onClose, amount }: PaymentModalProps) => 
           </button>
         </div>
 
+        {networkSelector}
+
         <div className="space-y-4">
           <div className="bg-base-100 border border-base-300 rounded-3xl px-6 py-4 space-y-3">
             <div className="flex flex-col gap-3">
@@ -198,11 +240,15 @@ export const PaymentModal = ({ isOpen, onClose, amount }: PaymentModalProps) => 
 
               <div className="flex flex-col gap-1">
                 <span className="text-sm font-bold">From:</span>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-mono">
-                    {address?.slice(0, 8)}...{address?.slice(-4)}
-                  </span>
-                  <Balance address={address} className="text-sm" />
+                <div className="flex flex-col gap-1">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-mono">
+                      {address?.slice(0, 8)}...{address?.slice(-4)}
+                    </span>
+                    <span className="btn btn-sm btn-ghost flex flex-col font-normal items-center hover:bg-transparent text-sm">
+                      {usdcBalance} USDC
+                    </span>
+                  </div>
                 </div>
               </div>
 

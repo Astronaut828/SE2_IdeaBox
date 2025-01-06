@@ -1,5 +1,5 @@
 import { Chain } from "viem";
-import { arbitrum, avalanche, base, bsc, fantom, mainnet, optimism, polygon } from "viem/chains";
+import { arbitrum, avalanche, base, bsc, fantom, hardhat, mainnet, optimism, polygon } from "viem/chains";
 
 export type NetworkConfig = {
   chainId: number;
@@ -83,6 +83,15 @@ export const NETWORK_CONFIG: { [chainId: number]: NetworkConfig } = {
     blockExplorer: "https://ftmscan.com/",
     usdcAddress: "0x04068DA6C83AFCFA0e13ba15A6696662335D5B75",
     color: "#1969FF",
+  },
+  [hardhat.id]: {
+    chainId: hardhat.id,
+    viemChain: hardhat,
+    label: "Localhost",
+    rpcUrl: "http://localhost:8545",
+    blockExplorer: "",
+    usdcAddress: "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+    color: "#b8af0c",
   },
 };
 

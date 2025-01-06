@@ -6,6 +6,7 @@ import { useAccount } from "wagmi";
 import { NETWORK_CONFIG } from "~~/utils/networks";
 
 const SUPPORTED_NETWORKS = [
+  31337, // Hardhat/Localhost
   1, // Mainnet
   10, // Optimism
   137, // Polygon

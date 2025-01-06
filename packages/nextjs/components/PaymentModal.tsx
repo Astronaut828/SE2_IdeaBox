@@ -99,9 +99,15 @@ export const PaymentModal = ({ isOpen, onClose, amount }: PaymentModalProps) => 
   };
 
   const handleNetworkChange = async (networkId: number) => {
-    if (switchChain) {
-      await switchChain({ chainId: networkId });
-      setSelectedNetwork(networkId);
+    try {
+      if (switchChain) {
+        await switchChain({ chainId: networkId });
+        setSelectedNetwork(networkId);
+      }
+    } catch (error) {
+      console.error("Failed to switch network:", error);
+      // Reset the select to the current chain
+      setSelectedNetwork(chain?.id || networkId);
     }
   };
 

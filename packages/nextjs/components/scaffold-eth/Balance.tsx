@@ -1,6 +1,7 @@
 "use client";
 
-import { Address } from "viem";
+import { Address, formatEther } from "viem";
+import { useWatchBalance } from "~~/hooks/scaffold-eth/useWatchBalance";
 import { useUSDCBalance } from "~~/hooks/useUSDCBalance";
 
 type BalanceProps = {
@@ -10,6 +11,7 @@ type BalanceProps = {
 
 export const Balance = ({ address, className = "" }: BalanceProps) => {
   const usdcBalance = useUSDCBalance(address);
+  const { data: ethBalance } = useWatchBalance({ address });
 
   if (!address) {
     return (
@@ -25,7 +27,9 @@ export const Balance = ({ address, className = "" }: BalanceProps) => {
   return (
     <div className={`btn btn-sm btn-ghost flex font-normal items-center hover:bg-transparent ${className}`}>
       <span className="text-[0.8em] font-bold mr-1">USDC:</span>
-      <span>{usdcBalance}</span>
+      <span>{usdcBalance} / </span>
+      <span className="text-[0.8em] font-bold mr-1">ETH:</span>
+      <span>{ethBalance ? formatEther(ethBalance.value) : "0"}</span>
     </div>
   );
 };

@@ -92,17 +92,28 @@ const CheckoutForm = ({ amount }: { amount: bigint }) => {
 
   if (status === "succeeded") {
     return (
-      <div className="relative text-center min-h-[200px] w-full">
+      <div className="relative text-center w-full">
         <div className="absolute inset-0">
-          <Confetti width={width} height={height} recycle={false} numberOfPieces={1200} gravity={0.2} />
+          <Confetti
+            width={width}
+            height={height}
+            recycle={false}
+            numberOfPieces={1200}
+            gravity={0.2}
+            drawShape={(ctx: CanvasRenderingContext2D) => {
+              ctx.beginPath();
+              ctx.arc(0, 0, 15, 0, 10 * Math.PI);
+              ctx.fill();
+            }}
+            style={{ position: "fixed", top: 0, left: 0, width: "100%", height: "100%", pointerEvents: "none" }}
+          />
         </div>
-        <div className="relative z-10 py-8">
-          <h3 className="text-2xl font-bold text-success mb-4">Payment Successful!</h3>
+        <div className="relative z-10 py-4">
+          <h3 className="text-xl sm:text-2xl font-bold text-success mb-4">Payment Successful!</h3>
 
-          {/* Receipt Style Payment Data Display */}
           {paymentData && (
-            <div className="mt-8 max-w-md mx-auto">
-              <div className="bg-base-200 opacity-50 rounded-lg p-6 shadow-lg">
+            <div className="mt-4 sm:mt-6 w-full max-w-xs sm:max-w-sm mx-auto">
+              <div className="bg-base-200 opacity-50 rounded-lg p-4 sm:p-6 shadow-lg">
                 <div className="text-center mb-6">
                   <h4 className="text-xl font-semibold">Payment Receipt</h4>
                   <p className="text-sm opacity-60">{new Date(paymentData.created * 1000).toLocaleString()}</p>

@@ -10,7 +10,7 @@ type ChainAttributes = {
 };
 
 export type ChainWithAttributes = chains.Chain & Partial<ChainAttributes>;
-export type AllowedChainIds = (typeof scaffoldConfig.targetNetworks)[number]["id"];
+export type AllowedChainIds = 1 | 10 | 137 | 42161 | 8453 | 43114 | 56 | 250;
 
 // Mapping of chainId to RPC chain name an format followed by alchemy and infura
 export const RPC_CHAIN_NAMES: Record<number, string> = {

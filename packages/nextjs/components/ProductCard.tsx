@@ -181,20 +181,18 @@ export const ProductCard = ({ product }: ProductCardProps) => {
         </div>
       </div>
       {isStripeModalOpen && (
-        <div className="modal modal-open">
-          <div className="modal-box relative w-11/12 max-w-lg">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-black/50" onClick={() => setIsStripeModalOpen(false)}></div>
+          <div className="modal-box relative w-full max-w-xs sm:max-w-sm md:max-w-md">
             <button
               className="btn btn-sm btn-circle absolute right-2 top-2 z-20"
               onClick={() => setIsStripeModalOpen(false)}
             >
               ✕
             </button>
-            <div className="relative z-10 overflow-hidden">
+            <div className="relative z-10 p-4">
               <StripePaymentButton amount={product.price} />
             </div>
-          </div>
-          <div className="modal-backdrop" onClick={() => setIsStripeModalOpen(false)}>
-            <button>close</button>
           </div>
         </div>
       )}

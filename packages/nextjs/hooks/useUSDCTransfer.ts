@@ -19,8 +19,7 @@ export const useUSDCTransfer = () => {
 
     // For hardhat, send ETH directly instead of USDC
     if (chain.id === hardhat.id) {
-      // Convert the amount from USDC (6 decimals) to ETH (18 decimals)
-      // First convert to a regular number
+      // Local hardhat ETH to USDC for testing - Adjusted so that 1 ETH = 1 USDC
       const usdcAmount = Number(amount) / 10 ** 6;
 
       const txHash = await writeTx({

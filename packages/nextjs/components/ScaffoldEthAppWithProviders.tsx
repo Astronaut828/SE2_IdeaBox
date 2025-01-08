@@ -71,7 +71,7 @@ export const ScaffoldEthAppWithProviders = ({ children }: { children: React.Reac
               noPromptOnSignature: true,
             },
             loginMethods: ["email", "wallet"],
-            defaultChain: hardhat,
+            defaultChain: hardhat, // TODO: Change to Base
             supportedChains: [hardhat],
           }}
         >

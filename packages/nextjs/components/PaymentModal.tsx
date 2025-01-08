@@ -20,7 +20,7 @@ interface PaymentModalProps {
 }
 
 export const PaymentModal = ({ isOpen, onClose, amount }: PaymentModalProps) => {
-  const { address, chain } = useAccount();
+  const { address, chain, connector } = useAccount();
   const { switchChain } = useSwitchChain();
   const usdcBalance = useUSDCBalance(address);
   const { transferUSDC } = useUSDCTransfer();
@@ -29,7 +29,18 @@ export const PaymentModal = ({ isOpen, onClose, amount }: PaymentModalProps) => 
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [transactionData, setTransactionData] = useState<any>(null);
   const publicClient = usePublicClient();
-  const [selectedNetwork, setSelectedNetwork] = useState<number>(chain?.id || 1);
+
+  // Initialize with first supported network, but will be updated when wallet connects
+  const [selectedNetwork, setSelectedNetwork] = useState<number>(() => {
+    return Object.values(NETWORK_CONFIG)[0].chainId;
+  });
+
+  // Watch for wallet connection and update selected network
+  useEffect(() => {
+    if (chain?.id && NETWORK_CONFIG[chain.id]) {
+      setSelectedNetwork(chain.id);
+    }
+  }, [chain?.id]);
 
   // Reset states when modal is opened
   useEffect(() => {
@@ -90,9 +101,21 @@ export const PaymentModal = ({ isOpen, onClose, amount }: PaymentModalProps) => 
         });
         setPaymentSuccess(true);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Payment failed:", error);
-      notification.error("Payment failed: " + (error as Error).message);
+
+      // Handle specific error cases
+      if (error.message.includes("User rejected") || error.message.includes("user rejected")) {
+        notification.error("You rejected the transaction");
+      } else if (error.message.includes("insufficient")) {
+        notification.error("Insufficient USDC balance");
+      } else if (error.message.includes("reverted")) {
+        notification.error("Transaction was reverted by the network");
+      } else {
+        // For unknown errors, show a cleaner error message
+        const cleanError = error.message.split("Request Arguments")[0].trim();
+        notification.error(cleanError);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -100,12 +123,67 @@ export const PaymentModal = ({ isOpen, onClose, amount }: PaymentModalProps) => 
 
   const handleNetworkChange = async (networkId: number) => {
     try {
-      if (switchChain) {
-        await switchChain({ chainId: networkId });
-        setSelectedNetwork(networkId);
+      // Validate that the network is supported
+      const targetNetwork = NETWORK_CONFIG[networkId];
+      if (!targetNetwork) {
+        notification.error("Network not supported");
+        return;
       }
-    } catch (error) {
-      console.error("Failed to switch network:", error);
+
+      if (switchChain) {
+        // Add network if it doesn't exist in wallet
+        try {
+          await switchChain({ chainId: networkId });
+        } catch (switchError: any) {
+          console.error("Switch Error Details:", {
+            code: switchError.code,
+            message: switchError.message,
+            connector: connector?.name, // from useAccount()
+          });
+
+          // Common error codes across different wallets
+          if (switchError.code === 4001) {
+            notification.error("User rejected network switch");
+            return;
+          }
+
+          // Try to add the network if:
+          // - MetaMask returns 4902 (chain not added)
+          // - Generic JSON-RPC error (-32603)
+          // - Method not supported (-32601)
+          // - Or if we get any other error (wallet might need network to be added first)
+          try {
+            await window.ethereum?.request({
+              method: "wallet_addEthereumChain",
+              params: [
+                {
+                  chainId: `0x${networkId.toString(16)}`,
+                  chainName: targetNetwork.label,
+                  nativeCurrency: {
+                    name: targetNetwork.viemChain.nativeCurrency.name,
+                    symbol: targetNetwork.viemChain.nativeCurrency.symbol,
+                    decimals: targetNetwork.viemChain.nativeCurrency.decimals,
+                  },
+                  rpcUrls: [targetNetwork.rpcUrl],
+                  blockExplorerUrls: [targetNetwork.blockExplorer],
+                },
+              ],
+            });
+            // After adding, try switching again
+            await switchChain({ chainId: networkId });
+          } catch (addError: any) {
+            console.error("Add Network Error:", addError);
+            notification.error("Unable to switch networks. Please try switching networks directly in your wallet.");
+            return;
+          }
+        }
+        setSelectedNetwork(networkId);
+      } else {
+        notification.error("Your wallet does not support programmatic network switching");
+      }
+    } catch (error: any) {
+      console.error("Network Change Error:", error);
+      notification.error(error.message || "Failed to switch network");
       // Reset the select to the current chain
       setSelectedNetwork(chain?.id || networkId);
     }

@@ -79,7 +79,7 @@ export const NETWORK_CONFIG: { [chainId: number]: NetworkConfig } = {
     chainId: fantom.id,
     viemChain: fantom,
     label: "Fantom",
-    rpcUrl: "https://rpc.ftm.tools/",
+    rpcUrl: "https://rpc.ankr.com/fantom",
     blockExplorer: "https://ftmscan.com/",
     usdcAddress: "0x04068DA6C83AFCFA0e13ba15A6696662335D5B75",
     color: "#1969FF",

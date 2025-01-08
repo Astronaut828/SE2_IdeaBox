@@ -101,9 +101,21 @@ export const PaymentModal = ({ isOpen, onClose, amount }: PaymentModalProps) => 
         });
         setPaymentSuccess(true);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Payment failed:", error);
-      notification.error("Payment failed: " + (error as Error).message);
+
+      // Handle specific error cases
+      if (error.message.includes("User rejected") || error.message.includes("user rejected")) {
+        notification.error("You rejected the transaction");
+      } else if (error.message.includes("insufficient")) {
+        notification.error("Insufficient USDC balance");
+      } else if (error.message.includes("reverted")) {
+        notification.error("Transaction was reverted by the network");
+      } else {
+        // For unknown errors, show a cleaner error message
+        const cleanError = error.message.split("Request Arguments")[0].trim();
+        notification.error(cleanError);
+      }
     } finally {
       setIsLoading(false);
     }

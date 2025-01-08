@@ -29,7 +29,18 @@ export const PaymentModal = ({ isOpen, onClose, amount }: PaymentModalProps) => 
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [transactionData, setTransactionData] = useState<any>(null);
   const publicClient = usePublicClient();
-  const [selectedNetwork, setSelectedNetwork] = useState<number>(chain?.id || 1);
+
+  // Initialize with first supported network, but will be updated when wallet connects
+  const [selectedNetwork, setSelectedNetwork] = useState<number>(() => {
+    return Object.values(NETWORK_CONFIG)[0].chainId;
+  });
+
+  // Watch for wallet connection and update selected network
+  useEffect(() => {
+    if (chain?.id && NETWORK_CONFIG[chain.id]) {
+      setSelectedNetwork(chain.id);
+    }
+  }, [chain?.id]);
 
   // Reset states when modal is opened
   useEffect(() => {

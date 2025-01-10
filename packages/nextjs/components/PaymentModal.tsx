@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { usePrivy } from "@privy-io/react-auth";
+import { useConnectModal } from "@rainbow-me/rainbowkit";
 import Confetti from "react-confetti";
 import CopyToClipboard from "react-copy-to-clipboard";
 import { usePublicClient } from "wagmi";
@@ -28,6 +29,7 @@ export const PaymentModal = ({ isOpen, onClose, amount }: PaymentModalProps) => 
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [transactionData, setTransactionData] = useState<any>(null);
   const publicClient = usePublicClient();
+  const { openConnectModal } = useConnectModal();
 
   // Initialize with first supported network, but will be updated when wallet connects
   const [selectedNetwork, setSelectedNetwork] = useState<number>(() => {
@@ -56,7 +58,22 @@ export const PaymentModal = ({ isOpen, onClose, amount }: PaymentModalProps) => 
   if (!isOpen) return null;
 
   const handlePayment = async () => {
-    if (!user || !address || !publicClient) return;
+    if (!user) {
+      notification.error("Please sign in to continue");
+      return;
+    }
+
+    // Check wallet connection first
+    if (!address && openConnectModal) {
+      notification.warning("Please connect your wallet for crypto payment");
+      openConnectModal();
+      return;
+    }
+
+    if (!address || !publicClient) {
+      notification.error("Please connect your wallet to continue");
+      return;
+    }
 
     if (!NETWORK_CONFIG[chain?.id || 0]) {
       notification.error("Please select a supported network");

@@ -159,12 +159,23 @@ export const db = {
       const userData = await db.readUser(userId);
       if (!userData) return null;
 
-      // Check if wallet already exists
-      const walletExists = userData.privy.linkedAccounts.some(
+      // First check if wallet exists in any user's account
+      const walletExistsGlobally = await db.checkAccountExists({
+        type: "wallet",
+        address: walletAddress,
+      });
+
+      if (walletExistsGlobally) {
+        console.warn("Wallet already exists in another user's account");
+        return userData;
+      }
+
+      // Then check if wallet exists in current user's account
+      const walletExistsLocally = userData.privy.linkedAccounts.some(
         (account: LinkedAccount) => account.type === "wallet" && account.address === walletAddress,
       );
 
-      if (walletExists) {
+      if (walletExistsLocally) {
         // If wallet exists, just update isDefaultWallet flags
         userData.privy.linkedAccounts = userData.privy.linkedAccounts.map((account: LinkedAccount) => ({
           ...account,
@@ -227,6 +238,33 @@ export const db = {
       return await redis.keys("*");
     } catch (error) {
       console.error("Get all keys error:", error);
+      throw error;
+    }
+  },
+
+  checkAccountExists: async (account: { type: string; address: string | null }): Promise<boolean> => {
+    try {
+      const keys = await redis.keys("*");
+
+      for (const key of keys) {
+        const userData = await db.readUser(key);
+        if (!userData) continue;
+
+        const hasAccount = userData.privy.linkedAccounts.some(
+          dbAccount =>
+            dbAccount.type === account.type &&
+            dbAccount.address === account.address &&
+            // Only check non-embedded wallets
+            (account.type !== "wallet" || dbAccount.connectorType !== "embedded"),
+        );
+
+        if (hasAccount) {
+          return true;
+        }
+      }
+      return false;
+    } catch (error) {
+      console.error("Error checking account existence:", error);
       throw error;
     }
   },

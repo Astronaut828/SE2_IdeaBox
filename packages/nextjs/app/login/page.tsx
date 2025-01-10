@@ -15,67 +15,42 @@ export default function LoginPage() {
       if (ready && authenticated && user) {
         try {
           // First check if user exists by Privy ID
-          let existingUser = await db.readUser(user.id);
+          const existingUser = await db.readUser(user.id);
 
           // If no user found, check for matching accounts
           if (!existingUser) {
-            const injectedWallets = user.linkedAccounts.filter(
-              account =>
-                account.type === "wallet" &&
-                "address" in account &&
-                ("walletClientType" in account || "connectorType" in account),
+            const filteredAccounts = await Promise.all(
+              user.linkedAccounts.map(async account => {
+                if ("address" in account && account.address) {
+                  const exists = await db.checkAccountExists({
+                    type: account.type,
+                    address: account.address,
+                  });
+                  return exists ? null : account;
+                }
+                return account;
+              }),
             );
 
-            // Check for email accounts
-            const emailAccounts = user.linkedAccounts.filter(
-              account => account.type === "email" && "address" in account,
-            );
-
-            const keys = await db.getAllKeys();
-
-            for (const key of keys) {
-              const userData = await db.readUser(key);
-              if (!userData) continue;
-
-              // Check for matching wallet or email
-              const hasMatchingAccount = userData.privy.linkedAccounts.some(dbAccount =>
-                [...injectedWallets, ...emailAccounts].some(
-                  userAccount =>
-                    "address" in userAccount &&
-                    dbAccount.address === userAccount.address &&
-                    ((dbAccount.type === "wallet" && dbAccount.connectorType !== "embedded") ||
-                      dbAccount.type === "email"),
-                ),
-              );
-
-              if (hasMatchingAccount) {
-                // Update the existing user's Privy ID
-                userData.privy.id = user.id;
-                await db.writeUser(user.id, userData);
-                existingUser = userData;
-                break;
-              }
-            }
-          }
-
-          if (!existingUser) {
-            // Create new user with updated structure
+            // Create new user with filtered accounts
             const newUser = {
               _id: crypto.randomUUID(),
               payed: false,
               privy: {
                 id: user.id,
                 createdAt: user.createdAt,
-                linkedAccounts: user.linkedAccounts.map(account => ({
-                  address: "address" in account ? account.address : null,
-                  type: account.type,
-                  firstVerifiedAt: account.firstVerifiedAt,
-                  latestVerifiedAt: account.latestVerifiedAt,
-                  ...("walletClientType" in account && {
-                    walletClientType: account.walletClientType,
-                    ...("connectorType" in account && { connectorType: account.connectorType }),
-                  }),
-                })),
+                linkedAccounts: filteredAccounts
+                  .filter(account => account !== null)
+                  .map(account => ({
+                    address: "address" in account ? account.address : null,
+                    type: account.type,
+                    firstVerifiedAt: account.firstVerifiedAt,
+                    latestVerifiedAt: account.latestVerifiedAt,
+                    ...("walletClientType" in account && {
+                      walletClientType: account.walletClientType,
+                      ...("connectorType" in account && { connectorType: account.connectorType }),
+                    }),
+                  })),
               },
               payments: [],
             };

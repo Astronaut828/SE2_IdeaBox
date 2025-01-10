@@ -11,7 +11,7 @@ interface ProductCardProps {
 
 export const ProductCard = ({ product }: ProductCardProps) => {
   const formatPrice = (price: bigint) => {
-    return `$ ${Number(price) / 1e6} / USDC`;
+    return `$ ${Number(price)} / USDC`;
   };
 
   // Determine product type and render specific details

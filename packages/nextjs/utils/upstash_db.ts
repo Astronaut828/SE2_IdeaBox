@@ -55,7 +55,8 @@ export interface PrivyData {
 }
 
 export interface PaymentDetail {
-  id: string;
+  id_hash: string;
+  chainId?: number;
   amount: number;
   currency: string;
   status: string;
@@ -158,13 +159,13 @@ export const db = {
       const userData = await db.readUser(userId);
       if (!userData) return null;
 
-      // Check if wallet already exists
-      const walletExists = userData.privy.linkedAccounts.some(
+      // Only check if wallet exists in current user's account
+      const walletExistsLocally = userData.privy.linkedAccounts.some(
         (account: LinkedAccount) => account.type === "wallet" && account.address === walletAddress,
       );
 
-      if (walletExists) {
-        // If wallet exists, just update isDefaultWallet flags
+      if (walletExistsLocally) {
+        // If wallet exists locally, just update isDefaultWallet flags
         userData.privy.linkedAccounts = userData.privy.linkedAccounts.map((account: LinkedAccount) => ({
           ...account,
           isDefaultWallet: account.type === "wallet" && account.address === walletAddress,
@@ -176,7 +177,7 @@ export const db = {
           isDefaultWallet: false,
         }));
 
-        // Add new wallet with isDefaultWallet set to true and use provided wallet info
+        // Add new wallet with isDefaultWallet set to true
         userData.privy.linkedAccounts.push({
           address: walletAddress,
           type: "wallet",
@@ -226,6 +227,33 @@ export const db = {
       return await redis.keys("*");
     } catch (error) {
       console.error("Get all keys error:", error);
+      throw error;
+    }
+  },
+
+  checkAccountExists: async (account: { type: string; address: string | null }): Promise<boolean> => {
+    try {
+      const keys = await redis.keys("*");
+
+      for (const key of keys) {
+        const userData = await db.readUser(key);
+        if (!userData) continue;
+
+        const hasAccount = userData.privy.linkedAccounts.some(
+          dbAccount =>
+            dbAccount.type === account.type &&
+            dbAccount.address === account.address &&
+            // Only check non-embedded wallets
+            (account.type !== "wallet" || dbAccount.connectorType !== "embedded"),
+        );
+
+        if (hasAccount) {
+          return true;
+        }
+      }
+      return false;
+    } catch (error) {
+      console.error("Error checking account existence:", error);
       throw error;
     }
   },

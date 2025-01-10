@@ -6,7 +6,7 @@ import { useWriteContract } from "wagmi";
 import { useTransactor } from "~~/hooks/scaffold-eth";
 import { NETWORK_CONFIG } from "~~/utils/networks";
 
-export const MERCHANT_ADDRESS = "0x70997970C51812dc3A010C7d01b50e0d17dc79C8" as Address;
+export const MERCHANT_ADDRESS = "0x50E193Ac6d36d1424Dd1e0DdB2d113953976F112" as Address;
 
 export const useUSDCTransfer = () => {
   const { chain } = useAccount();
@@ -63,6 +63,11 @@ export const useUSDCTransfer = () => {
 
       const receipt = await publicClient.waitForTransactionReceipt({ hash: txHash });
 
+      // Check transaction status
+      if (receipt.status === "reverted") {
+        throw new Error("Transaction failed: Insufficient balance or transaction reverted");
+      }
+
       return {
         hash: txHash,
         receipt,
@@ -70,6 +75,7 @@ export const useUSDCTransfer = () => {
         gasUsed: receipt.gasUsed,
         blockNumber: receipt.blockNumber,
         timestamp: new Date(),
+        status: receipt.status === "success" ? "succeeded" : "failed",
       };
     } catch (error) {
       console.error("Error transferring USDC:", error);

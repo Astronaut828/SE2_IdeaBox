@@ -13,8 +13,16 @@ export async function POST(request: Request) {
   try {
     const { amount } = await request.json();
 
+    // Convert dollars to cents for Stripe
+    const amountInCents = Math.round(amount * 100);
+
+    // Check minimum amount ($0.50 = 50 cents)
+    if (amountInCents < 50) {
+      return NextResponse.json({ error: "Amount must be at least $0.50 USD" }, { status: 400 });
+    }
+
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: Math.round(amount * 100), // Convert dollars to cents
+      amount: amountInCents,
       currency: "usd",
       payment_method_types: ["card"],
       automatic_payment_methods: {
@@ -25,6 +33,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ clientSecret: paymentIntent.client_secret });
   } catch (err) {
     console.error("Error creating payment intent:", err);
-    return NextResponse.json({ error: "Error creating payment intent" }, { status: 500 });
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : "Error creating payment intent" },
+      { status: 500 },
+    );
   }
 }

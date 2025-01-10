@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { usePrivy } from "@privy-io/react-auth";
+import { useConnectModal } from "@rainbow-me/rainbowkit";
 import Confetti from "react-confetti";
 import CopyToClipboard from "react-copy-to-clipboard";
-import { formatUnits } from "viem";
 import { usePublicClient } from "wagmi";
 import { useAccount } from "wagmi";
 import { useSwitchChain } from "wagmi";
@@ -29,6 +29,7 @@ export const PaymentModal = ({ isOpen, onClose, amount }: PaymentModalProps) => 
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [transactionData, setTransactionData] = useState<any>(null);
   const publicClient = usePublicClient();
+  const { openConnectModal } = useConnectModal();
 
   // Initialize with first supported network, but will be updated when wallet connects
   const [selectedNetwork, setSelectedNetwork] = useState<number>(() => {
@@ -51,13 +52,48 @@ export const PaymentModal = ({ isOpen, onClose, amount }: PaymentModalProps) => 
     }
   }, [isOpen]);
 
+  useEffect(() => {
+    const handleWalletConnection = async () => {
+      if (address && user && connector) {
+        const walletInfo = {
+          walletClientType: connector.id || "injected",
+          connectorType: connector.name?.toLowerCase() || "injected",
+        };
+        try {
+          await db.addWalletToUser(user.id, address, walletInfo);
+        } catch (error) {
+          console.error("Error saving wallet:", error);
+        }
+      }
+    };
+
+    if (address && user && connector) {
+      handleWalletConnection();
+    }
+  }, [address, user, connector]);
+
   const width = typeof window !== "undefined" ? window.innerWidth * 2 : 1000;
   const height = typeof window !== "undefined" ? window.innerHeight * 2 : 1000;
 
   if (!isOpen) return null;
 
   const handlePayment = async () => {
-    if (!user || !address || !publicClient) return;
+    if (!user) {
+      notification.error("Please sign in to continue");
+      return;
+    }
+
+    // Check wallet connection first
+    if (!address && openConnectModal) {
+      notification.warning("Please connect your wallet for crypto payment");
+      openConnectModal();
+      return;
+    }
+
+    if (!address || !publicClient) {
+      notification.error("Please connect your wallet to continue");
+      return;
+    }
 
     if (!NETWORK_CONFIG[chain?.id || 0]) {
       notification.error("Please select a supported network");
@@ -74,10 +110,11 @@ export const PaymentModal = ({ isOpen, onClose, amount }: PaymentModalProps) => 
         if (!userData) return;
 
         const paymentDetail: PaymentDetail = {
-          id: hash,
+          id_hash: hash,
+          chainId: chain?.id,
           amount: paidAmount,
           currency: "USDC",
-          status: "succeeded",
+          status: receipt.status === "success" ? "succeeded" : "failed",
           type: "crypto",
           timestamp,
           subscriptionEndsAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
@@ -104,13 +141,19 @@ export const PaymentModal = ({ isOpen, onClose, amount }: PaymentModalProps) => 
     } catch (error: any) {
       console.error("Payment failed:", error);
 
+      // Get user's current USDC balance
+      const currentBalance = Number(usdcBalance);
+      const requestedAmount = Number(amount);
+
       // Handle specific error cases
       if (error.message.includes("User rejected") || error.message.includes("user rejected")) {
         notification.error("You rejected the transaction");
-      } else if (error.message.includes("insufficient")) {
-        notification.error("Insufficient USDC balance");
+      } else if (currentBalance < requestedAmount) {
+        notification.error(
+          `Insufficient USDC balance. You have ${currentBalance} USDC but trying to send ${requestedAmount} USDC`,
+        );
       } else if (error.message.includes("reverted")) {
-        notification.error("Transaction was reverted by the network");
+        notification.error("Transaction failed. Please check your balance and try again");
       } else {
         // For unknown errors, show a cleaner error message
         const cleanError = error.message.split("Request Arguments")[0].trim();
@@ -319,7 +362,7 @@ export const PaymentModal = ({ isOpen, onClose, amount }: PaymentModalProps) => 
               <div className="flex justify-between items-center border-b border-base-300 pb-3">
                 <span className="text-sm font-bold">Product Price:</span>
                 <div className="flex items-center">
-                  <span className="text-2xl font-bold">{formatUnits(amount, 6)}</span>
+                  <span className="text-2xl font-bold">{Number(amount)}</span>
                   <span className="ml-2 text-sm opacity-70">USDC</span>
                 </div>
               </div>

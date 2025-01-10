@@ -2,6 +2,27 @@
 
 A platform for creators to sell digital content and subscription services payment via USDC and Credit Card, built on [Scaffold-ETH 2](https://github.com/scaffold-eth/scaffold-eth-2).
 
+> ⚠️ **Test Mode Instructions**
+>
+> ```
+> Currently the app is in test mode, so you can test the USDC payment as well as the Card payment method:
+>
+> 1. For Crypto Payment:
+>    - Use the faucet to get some ETH
+>    - The payment will be successful but will send test ETH
+>    - ETH will be transferred on Localhost instead of USDC on live chain
+>
+> 2. For Credit Card Payment:
+>    - Test Card Number: 4242 4242 4242 4242
+>    - CVC: Any 3 digits
+>    - Expiry Date: Any future date
+>
+> 3. Development Environment:
+>    - All features run on localhost for testing
+>    - Free tier available for all integrations (Privy, Stripe, Upstash)
+>    - Perfect for testing product demand before upgrading to paid tiers
+> ```
+
 ## 📚 Documentation Links
 
 -   [Scaffold-ETH 2 Documentation](https://docs.scaffoldeth.io/)

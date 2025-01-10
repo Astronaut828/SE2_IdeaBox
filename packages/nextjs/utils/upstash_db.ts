@@ -159,24 +159,13 @@ export const db = {
       const userData = await db.readUser(userId);
       if (!userData) return null;
 
-      // First check if wallet exists in any user's account
-      const walletExistsGlobally = await db.checkAccountExists({
-        type: "wallet",
-        address: walletAddress,
-      });
-
-      if (walletExistsGlobally) {
-        console.warn("Wallet already exists in another user's account");
-        return userData;
-      }
-
-      // Then check if wallet exists in current user's account
+      // Only check if wallet exists in current user's account
       const walletExistsLocally = userData.privy.linkedAccounts.some(
         (account: LinkedAccount) => account.type === "wallet" && account.address === walletAddress,
       );
 
       if (walletExistsLocally) {
-        // If wallet exists, just update isDefaultWallet flags
+        // If wallet exists locally, just update isDefaultWallet flags
         userData.privy.linkedAccounts = userData.privy.linkedAccounts.map((account: LinkedAccount) => ({
           ...account,
           isDefaultWallet: account.type === "wallet" && account.address === walletAddress,
@@ -188,7 +177,7 @@ export const db = {
           isDefaultWallet: false,
         }));
 
-        // Add new wallet with isDefaultWallet set to true and use provided wallet info
+        // Add new wallet with isDefaultWallet set to true
         userData.privy.linkedAccounts.push({
           address: walletAddress,
           type: "wallet",

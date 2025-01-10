@@ -4,7 +4,7 @@ export const sampleProducts = {
   digital: {
     id: BigInt(1),
     name: "DigitalProduct / Download",
-    price: BigInt(200000000), // $200
+    price: BigInt(1), // $ 1
     body: "Option to offer content for download",
     downloadUrl: "https://example.com/web3-toolkit-pro",
     fileSize: "2.5GB",
@@ -15,7 +15,7 @@ export const sampleProducts = {
   course: {
     id: BigInt(2),
     name: "Course / Access",
-    price: BigInt(300000000), // $ 300
+    price: BigInt(3), // $ 3
     body: "Option to offer access to a course for a limited time",
     accessDuration: 365, // 1 year access
     courseLevel: "advanced",
@@ -35,7 +35,7 @@ export const sampleProducts = {
   subscription: {
     id: BigInt(3),
     name: "Subscription / Access",
-    price: BigInt(150000000), // $150
+    price: BigInt(5), // $5
     body: "Option to offer access to a subscription service for a limited time",
     billingCycle: "monthly",
     features: [

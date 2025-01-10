@@ -29,7 +29,8 @@ const CheckoutForm = ({ amount }: { amount: bigint }) => {
       if (!userData) return;
 
       const paymentDetail: PaymentDetail = {
-        id: paymentIntent.id,
+        id_hash: paymentIntent.id,
+        chainId: 0,
         amount: paymentIntent.amount / 100,
         currency: paymentIntent.currency,
         status: paymentIntent.status,
@@ -162,7 +163,7 @@ const CheckoutForm = ({ amount }: { amount: bigint }) => {
       <PaymentElement />
       {error && <div className="text-error text-sm mt-2">{error}</div>}
       <button type="submit" disabled={!stripe || loading} className="btn btn-primary mt-4 w-full">
-        {loading ? <span className="loading loading-spinner loading-sm"></span> : `Pay $${Number(amount) / 1e6}`}
+        {loading ? <span className="loading loading-spinner loading-sm"></span> : `Pay $${Number(amount)}`}
       </button>
     </form>
   );
@@ -178,7 +179,7 @@ export const StripePaymentButton = ({ amount }: { amount: bigint }) => {
     fetch("/api/create-payment-intent", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ amount: Number(amount) / 1e6 }),
+      body: JSON.stringify({ amount: Number(amount) }),
     })
       .then(res => res.json())
       .then(data => {

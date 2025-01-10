@@ -55,7 +55,8 @@ export interface PrivyData {
 }
 
 export interface PaymentDetail {
-  id: string;
+  id_hash: string;
+  chainId?: number;
   amount: number;
   currency: string;
   status: string;

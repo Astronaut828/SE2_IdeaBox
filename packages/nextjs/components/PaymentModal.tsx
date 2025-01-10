@@ -52,6 +52,23 @@ export const PaymentModal = ({ isOpen, onClose, amount }: PaymentModalProps) => 
     }
   }, [isOpen]);
 
+  // Add wallet connection effect
+  useEffect(() => {
+    const handleWalletConnection = async () => {
+      if (address && user && connector) {
+        const walletInfo = {
+          walletClientType: connector.id || "injected",
+          connectorType: connector.name?.toLowerCase() || "injected",
+        };
+        await db.addWalletToUser(user.id, address, walletInfo);
+      }
+    };
+
+    if (address && user && connector) {
+      handleWalletConnection();
+    }
+  }, [address, user, connector]);
+
   const width = typeof window !== "undefined" ? window.innerWidth * 2 : 1000;
   const height = typeof window !== "undefined" ? window.innerHeight * 2 : 1000;
 

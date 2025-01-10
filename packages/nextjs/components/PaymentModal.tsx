@@ -52,7 +52,6 @@ export const PaymentModal = ({ isOpen, onClose, amount }: PaymentModalProps) => 
     }
   }, [isOpen]);
 
-  // Add wallet connection effect
   useEffect(() => {
     const handleWalletConnection = async () => {
       if (address && user && connector) {
@@ -60,7 +59,11 @@ export const PaymentModal = ({ isOpen, onClose, amount }: PaymentModalProps) => 
           walletClientType: connector.id || "injected",
           connectorType: connector.name?.toLowerCase() || "injected",
         };
-        await db.addWalletToUser(user.id, address, walletInfo);
+        try {
+          await db.addWalletToUser(user.id, address, walletInfo);
+        } catch (error) {
+          console.error("Error saving wallet:", error);
+        }
       }
     };
 

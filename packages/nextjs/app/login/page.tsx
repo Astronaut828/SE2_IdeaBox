@@ -113,10 +113,9 @@ export default function LoginPage() {
               </p>
               <Button />
             </div>
-            {/* TODO: On a small screen show less animated blocks and size the shop image correctly */}
-            <div className="flex-1 order-2 lg:order-2 w-full max-w-[300px] sm:max-w-[450px] lg:max-w-lg mx-auto">
-              <div className="relative w-full aspect-square max-w-lg mx-auto">
-                <div className="absolute inset-0 rounded-xl transform perspective-1000 rotate-y-12 rotate-x-12 group hover:rotate-y-6 transition-transform duration-700">
+            <div className="flex-1 order-2 lg:order-2 w-full">
+              <div className="grid grid-cols-1 gap-8 px-8">
+                <div className="relative aspect-square rounded-xl">
                   <div className="absolute inset-1 bg-base-200/50 backdrop-blur-sm rounded-lg p-4 border border-base-content/10">
                     <div className="h-full bg-gradient-to-br from-primary/20 to-secondary/80 rounded-md p-4 relative">
                       <Image
@@ -130,19 +129,6 @@ export default function LoginPage() {
                     </div>
                   </div>
                 </div>
-
-                {[...Array(5)].map((_, i) => (
-                  <div
-                    key={i}
-                    className="absolute w-20 h-20 bg-base-content/20 rounded-lg animate-float"
-                    style={{
-                      top: `${35 + i * 10}%`,
-                      right: `${-10 + i * 25}%`,
-                      animationDelay: `${i * 0.5}s`,
-                      transform: `rotate(${i * 15}deg)`,
-                    }}
-                  />
-                ))}
               </div>
             </div>
           </div>

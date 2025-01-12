@@ -30,3 +30,10 @@ p {
 .btn.btn-ghost {
   @apply shadow-none;
 }
+
+@layer utilities {
+  .backdrop-blur-sm {
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+  }
+}

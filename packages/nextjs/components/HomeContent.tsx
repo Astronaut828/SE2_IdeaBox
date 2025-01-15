@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { ProductCard } from "./ProductCard";
 import { sampleProducts } from "./SampleProducts";
+import { optionalSampleProducts } from "./optionalSampleProducts";
 import { usePrivy } from "@privy-io/react-auth";
 // import { useAccount } from "wagmi";
 import { BugAntIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
@@ -31,7 +32,6 @@ export const HomeContent = () => {
     <div className="flex items-center flex-col flex-grow pt-5 sm:pt-10">
       <div className="px-2 sm:px-5 w-full">
         <h1 className="text-center mb-8">
-          <span className="block text-xl sm:text-2xl mb-2">Welcome to</span>
           <span className="block text-3xl sm:text-4xl font-bold">IdeaBox</span>
         </h1>
         {/* Products */}
@@ -41,6 +41,11 @@ export const HomeContent = () => {
             <ProductCard product={sampleProducts.digital} />
             <ProductCard product={sampleProducts.course} />
             <ProductCard product={sampleProducts.subscription} />
+            <ProductCard product={optionalSampleProducts.consulting} />
+            <ProductCard product={optionalSampleProducts.softwareLicense} />
+            <ProductCard product={optionalSampleProducts.membership} />
+            <ProductCard product={optionalSampleProducts.nft} />
+            <ProductCard product={optionalSampleProducts.apiAccess} />
           </div>
         </div>
         {/* Redis */}

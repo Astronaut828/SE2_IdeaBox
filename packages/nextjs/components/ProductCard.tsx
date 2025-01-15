@@ -1,12 +1,31 @@
 import { useState } from "react";
 import Image from "next/image";
 import { PaymentModal } from "./PaymentModal";
-import { CourseProduct, DigitalProduct, SubscriptionProduct } from "./ProductModels";
+import {
+  APIAccessProduct,
+  ConsultingProduct,
+  CourseProduct,
+  DigitalProduct,
+  MembershipProduct,
+  NFTProduct,
+  SoftwareLicenseProduct,
+  SubscriptionProduct,
+} from "./ProductModels";
 import { StripePaymentButton } from "./StripePaymentButton";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 
+type AllProductTypes =
+  | DigitalProduct
+  | CourseProduct
+  | SubscriptionProduct
+  | ConsultingProduct
+  | SoftwareLicenseProduct
+  | MembershipProduct
+  | NFTProduct
+  | APIAccessProduct;
+
 interface ProductCardProps {
-  product: DigitalProduct | CourseProduct | SubscriptionProduct;
+  product: AllProductTypes;
 }
 
 export const ProductCard = ({ product }: ProductCardProps) => {

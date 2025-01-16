@@ -12,9 +12,10 @@ export interface DigitalProduct extends BaseProduct {
   fileSize: string;
   fileFormat: string;
   licenseType: "personal" | "commercial" | "enterprise";
+  features: string[];
 }
 
-// Course/Access Product (e.g., online courses, gated content)
+// Course Product (e.g., online courses, gated content)
 export interface CourseProduct extends BaseProduct {
   accessDuration: number; // duration in days
   courseLevel: "beginner" | "intermediate" | "advanced";
@@ -22,6 +23,7 @@ export interface CourseProduct extends BaseProduct {
   includesSupport: boolean;
   accessType: "Full Access" | "Limited Access";
   contentType: "video" | "text" | "interactive" | "hybrid";
+  features: string[];
 }
 
 // Subscription Product (e.g., services, memberships)
@@ -36,22 +38,6 @@ export interface SubscriptionProduct extends BaseProduct {
     endDate: number; // Unix timestamp when subscription expires
     lastRenewalDate?: number; // Optional: timestamp of last renewal
   };
-}
-
-// Consulting Product (e.g., expert sessions, advisory services)
-export interface ConsultingProduct extends BaseProduct {
-  sessionDuration: number; // minutes
-  expertiseLevel: "junior" | "senior" | "principal";
-  availability: {
-    timeZone: string;
-    availableDays: string[];
-    availableHours: string[];
-  };
-  deliverables: string[];
-  consultationType: "one-time" | "ongoing" | "retainer";
-  communicationChannel: "video" | "phone" | "in-person" | "chat";
-  cancellationWindow: number; // hours before session
-  expertise: string[];
 }
 
 // Software License Product (e.g., enterprise software, development tools)
@@ -86,29 +72,7 @@ export interface MembershipProduct extends BaseProduct {
   votingRights: boolean;
   referralBenefits: boolean;
   maxMembers?: number;
-}
-
-// NFT Product (e.g., digital collectibles, art)
-export interface NFTProduct extends BaseProduct {
-  collection: string;
-  tokenId: string;
-  blockchain: "ethereum" | "polygon" | "solana" | "other";
-  metadata: {
-    image: string;
-    attributes: {
-      trait_type: string;
-      value: string;
-      rarity?: number;
-    }[];
-  };
-  royaltyPercentage: number;
-  edition: {
-    total: number;
-    number: number;
-  };
-  provenance: string;
-  utilityFeatures: string[];
-  transferRestrictions?: string[];
+  features: string[];
 }
 
 // API Access Product (e.g., data services, web3 APIs)
@@ -129,4 +93,5 @@ export interface APIAccessProduct extends BaseProduct {
   customization: boolean;
   uptime: number;
   sandboxAccess: boolean;
+  features: string[];
 }

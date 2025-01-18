@@ -1,12 +1,27 @@
 import { useState } from "react";
 import Image from "next/image";
 import { PaymentModal } from "./PaymentModal";
-import { CourseProduct, DigitalProduct, SubscriptionProduct } from "./ProductModels";
+import {
+  APIAccessProduct,
+  CourseProduct,
+  DigitalProduct,
+  MembershipProduct,
+  SoftwareLicenseProduct,
+  SubscriptionProduct,
+} from "./ProductModels";
 import { StripePaymentButton } from "./StripePaymentButton";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 
+type AllProductTypes =
+  | DigitalProduct
+  | CourseProduct
+  | SubscriptionProduct
+  | SoftwareLicenseProduct
+  | MembershipProduct
+  | APIAccessProduct;
+
 interface ProductCardProps {
-  product: DigitalProduct | CourseProduct | SubscriptionProduct;
+  product: AllProductTypes;
 }
 
 export const ProductCard = ({ product }: ProductCardProps) => {
@@ -16,6 +31,8 @@ export const ProductCard = ({ product }: ProductCardProps) => {
 
   // Determine product type and render specific details
   const renderProductDetails = () => {
+    const productWithFeatures = product as AllProductTypes;
+
     if ("downloadUrl" in product) {
       // Digital Product
       return (
@@ -39,6 +56,23 @@ export const ProductCard = ({ product }: ProductCardProps) => {
             >
               Download Link
             </a>
+          </div>
+          <div>
+            <span className="font-medium">Features:</span>
+            <ul className="list-disc list-inside text-xs mt-1">
+              {productWithFeatures.features.map((feature, index) => (
+                <li key={index} className="truncate">
+                  {typeof feature === "string" ? (
+                    feature
+                  ) : (
+                    <>
+                      {feature.name} - {feature.included ? "Included" : "Not Included"}{" "}
+                      {feature.description && `(${feature.description})`}
+                    </>
+                  )}
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       );
@@ -70,6 +104,23 @@ export const ProductCard = ({ product }: ProductCardProps) => {
               ))}
             </ul>
           </div>
+          <div>
+            <span className="font-medium">Features:</span>
+            <ul className="list-disc list-inside text-xs mt-1">
+              {productWithFeatures.features.map((feature, index) => (
+                <li key={index} className="truncate">
+                  {typeof feature === "string" ? (
+                    feature
+                  ) : (
+                    <>
+                      {feature.name} - {feature.included ? "Included" : "Not Included"}{" "}
+                      {feature.description && `(${feature.description})`}
+                    </>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       );
     } else if ("billingCycle" in product) {
@@ -87,9 +138,85 @@ export const ProductCard = ({ product }: ProductCardProps) => {
           <div>
             <span className="font-medium">Features:</span>
             <ul className="list-disc list-inside text-xs mt-1">
-              {product.features.map((feature, index) => (
+              {productWithFeatures.features.map((feature, index) => (
                 <li key={index} className="truncate">
-                  {feature}
+                  {typeof feature === "string" ? (
+                    feature
+                  ) : (
+                    <>
+                      {feature.name} - {feature.included ? "Included" : "Not Included"}{" "}
+                      {feature.description && `(${feature.description})`}
+                    </>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      );
+    } else if ("maxUsers" in product) {
+      // Software License Product
+      return (
+        <div className="text-sm space-y-1 text-neutral">
+          <div>
+            <span className="font-medium">Features:</span>
+            <ul className="list-disc list-inside text-xs mt-1">
+              {productWithFeatures.features.map((feature, index) => (
+                <li key={index} className="truncate">
+                  {typeof feature === "string" ? (
+                    feature
+                  ) : (
+                    <>
+                      {feature.name} - {feature.included ? "Included" : "Not Included"}{" "}
+                      {feature.description && `(${feature.description})`}
+                    </>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      );
+    } else if ("tier" in product) {
+      // Membership Product
+      return (
+        <div className="text-sm space-y-1 text-neutral">
+          <div>
+            <span className="font-medium">Features:</span>
+            <ul className="list-disc list-inside text-xs mt-1">
+              {productWithFeatures.features.map((feature, index) => (
+                <li key={index} className="truncate">
+                  {typeof feature === "string" ? (
+                    feature
+                  ) : (
+                    <>
+                      {feature.name} - {feature.included ? "Included" : "Not Included"}{" "}
+                      {feature.description && `(${feature.description})`}
+                    </>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      );
+    } else if ("rateLimit" in product) {
+      // API Access Product
+      return (
+        <div className="text-sm space-y-1 text-neutral">
+          <div>
+            <span className="font-medium">Features:</span>
+            <ul className="list-disc list-inside text-xs mt-1">
+              {productWithFeatures.features.map((feature, index) => (
+                <li key={index} className="truncate">
+                  {typeof feature === "string" ? (
+                    feature
+                  ) : (
+                    <>
+                      {feature.name} - {feature.included ? "Included" : "Not Included"}{" "}
+                      {feature.description && `(${feature.description})`}
+                    </>
+                  )}
                 </li>
               ))}
             </ul>

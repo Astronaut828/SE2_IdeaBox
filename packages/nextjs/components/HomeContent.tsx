@@ -31,7 +31,6 @@ export const HomeContent = () => {
     <div className="flex items-center flex-col flex-grow pt-5 sm:pt-10">
       <div className="px-2 sm:px-5 w-full">
         <h1 className="text-center mb-8">
-          <span className="block text-xl sm:text-2xl mb-2">Welcome to</span>
           <span className="block text-3xl sm:text-4xl font-bold">IdeaBox</span>
         </h1>
         {/* Products */}
@@ -41,6 +40,9 @@ export const HomeContent = () => {
             <ProductCard product={sampleProducts.digital} />
             <ProductCard product={sampleProducts.course} />
             <ProductCard product={sampleProducts.subscription} />
+            <ProductCard product={sampleProducts.softwareLicense} />
+            <ProductCard product={sampleProducts.membership} />
+            <ProductCard product={sampleProducts.apiAccess} />
           </div>
         </div>
         {/* Redis */}

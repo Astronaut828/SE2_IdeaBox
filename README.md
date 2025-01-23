@@ -7,12 +7,12 @@ A platform for creators to sell digital content and subscription services paymen
 > ```
 > Currently the app is in test mode, so you can test the USDC payment as well as the Card payment method:
 >
-> 1. For Crypto Payment:
+> 1. For Crypto Payment: (only on local network)
 >    - Use the faucet to get some ETH
 >    - The payment will be successful but will send test ETH
 >    - ETH will be transferred on Localhost instead of USDC on live chain
 >
-> 2. For Credit Card Payment:
+> 2. For Credit Card Payment: (works on live demo)
 >    - Test Card Number: 4242 4242 4242 4242
 >    - CVC: Any 3 digits
 >    - Expiry Date: Any future date

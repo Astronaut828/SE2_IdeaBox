@@ -17,6 +17,10 @@ export const HomeContent = () => {
     return (
       <div className="p-5 bg-base-100 border border-base-300 rounded-lg shadow-md w-full">
         <h2 className="text-xl font-semibold mb-4">Current User</h2>
+        <div className="flex items-center gap-2">
+          <p className="text-sm">test user:</p>
+          <p className="text-sm text-red-500">ID: did:privy:cm5sma46v08hjoahlcuql688f</p>
+        </div>
         <div className="space-y-2">
           <div className="flex flex-col sm:flex-row gap-2">
             <span className="font-medium whitespace-nowrap">Privy ID: </span>

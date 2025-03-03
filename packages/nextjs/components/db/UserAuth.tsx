@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { InformationCircleIcon } from "@heroicons/react/24/outline";
 import { PaymentDetail, PrivyData, db, testRedisConnection } from "~~/utils/upstash_db";
 
 interface User {
@@ -28,11 +29,19 @@ const UserAuth = () => {
 
   return (
     <div className="p-6 bg-base-100 border border-base-300 rounded-lg shadow-md">
-      <h2 className="text-xl font-semibold mb-4">UserAuth Database widget</h2>
+      <div className="flex items-center gap-2 mb-4">
+        <h2 className="text-xl font-semibold">UserAuth Database widget</h2>
+        <div
+          className="tooltip"
+          data-tip="Enter a Privy ID to see what information is stored for that user in the database"
+        >
+          <InformationCircleIcon className="h-5 w-5 text-base-content/70 cursor-help" />
+        </div>
+      </div>
       <div className="space-y-4">
         <input
           type="text"
-          placeholder="Enter Privy ID"
+          placeholder="Enter User ID"
           value={readId}
           onChange={e => setReadId(e.target.value)}
           className="input input-bordered w-full"

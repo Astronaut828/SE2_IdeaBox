@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { usePrivy } from "@privy-io/react-auth";
 import { SwitchTheme } from "~~/components/SwitchTheme";
-import { Button } from "~~/components/auth";
+import { Button, DemoButton } from "~~/components/auth";
 import { db } from "~~/utils/upstash_db";
 
 export default function LoginPage() {
@@ -111,7 +111,10 @@ export default function LoginPage() {
                 Your one-stop platform for premium digital content, expert-led courses, and exclusive Web3
                 subscriptions.
               </p>
-              <Button />
+              <div className="flex flex-col gap-4 justify-center">
+                <Button />
+                <DemoButton />
+              </div>
             </div>
             <div className="flex-1 order-2 lg:order-2 w-full">
               <div className="grid grid-cols-1 gap-8 px-8">

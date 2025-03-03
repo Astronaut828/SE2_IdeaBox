@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -60,13 +60,20 @@ export const HeaderMenuLinks = () => {
 export const Header = () => {
   const { authenticated } = usePrivy();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isDemoMode, setIsDemoMode] = useState(false);
   const burgerMenuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const demoMode = localStorage.getItem("demoMode") === "true";
+    setIsDemoMode(demoMode);
+  }, []);
+
   useOutsideClick(
     burgerMenuRef,
     useCallback(() => setIsDrawerOpen(false), []),
   );
 
-  if (!authenticated) {
+  if (!authenticated && !isDemoMode) {
     return null;
   }
 

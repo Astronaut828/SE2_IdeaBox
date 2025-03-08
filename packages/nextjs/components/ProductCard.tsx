@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { PaymentModal } from "./PaymentModal";
 import {
@@ -28,6 +28,15 @@ export const ProductCard = ({ product }: ProductCardProps) => {
   const formatPrice = (price: bigint) => {
     return `$ ${Number(price)} / USDC`;
   };
+
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [isStripeModalOpen, setIsStripeModalOpen] = useState(false);
+  const [isDemoMode, setIsDemoMode] = useState(false);
+
+  useEffect(() => {
+    const demoMode = localStorage.getItem("demoMode") === "true";
+    setIsDemoMode(demoMode);
+  }, []);
 
   // Determine product type and render specific details
   const renderProductDetails = () => {
@@ -226,9 +235,6 @@ export const ProductCard = ({ product }: ProductCardProps) => {
     }
   };
 
-  const [isStripeModalOpen, setIsStripeModalOpen] = useState(false);
-  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
-
   return (
     <div className="card bg-base-100 shadow-xl h-full hover:shadow-2xl transition-shadow duration-200">
       <figure className="px-3 sm:px-4 pt-3 sm:pt-4">
@@ -263,6 +269,8 @@ export const ProductCard = ({ product }: ProductCardProps) => {
             <button
               className="btn btn-primary btn-xs sm:btn-sm h-auto min-h-[2rem] sm:min-h-[2.5rem] flex items-center justify-center gap-2"
               onClick={() => setIsStripeModalOpen(true)}
+              disabled={isDemoMode}
+              title={isDemoMode ? "Payments disabled in demo mode" : ""}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -290,6 +298,8 @@ export const ProductCard = ({ product }: ProductCardProps) => {
                       setIsPaymentModalOpen(true);
                     }
                   }}
+                  disabled={isDemoMode}
+                  title={isDemoMode ? "Payments disabled in demo mode" : ""}
                   type="button"
                 >
                   <svg

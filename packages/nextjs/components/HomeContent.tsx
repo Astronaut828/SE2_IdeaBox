@@ -27,7 +27,9 @@ export const HomeContent = () => {
   const renderUserDetails = () => {
     if (!user && !isDemoMode) return null;
 
-    const userId = isDemoMode ? "did:privy:cm5sma46v08hjoahlcuql688f" : user?.id;
+    // If we're in demo mode AND there's no user, show demo ID
+    // Otherwise show the actual user ID
+    const userId = !user && isDemoMode ? "did:privy:cm5sma46v08hjoahlcuql688f" : user?.id;
 
     const handleCopy = () => {
       if (userId) {
@@ -69,9 +71,14 @@ export const HomeContent = () => {
   return (
     <div className="flex items-center flex-col flex-grow pt-5 sm:pt-10">
       <div className="px-2 sm:px-5 w-full">
-        <h1 className="text-center mb-8">
+        <h1 className="text-center mb-4">
           <span className="block text-3xl sm:text-4xl font-bold">IdeaBox</span>
         </h1>
+        {isDemoMode && (
+          <div className="text-center mb-8 text-base-content/70">
+            ℹ️ You are in demo mode. Login to access full payment features and wallet connections.
+          </div>
+        )}
         {/* Products */}
         <div className="w-full max-w-7xl mx-auto mt-8 sm:mt-16">
           {/* All Products Grid */}

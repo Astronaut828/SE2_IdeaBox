@@ -1,6 +1,6 @@
 # 🏗 IdeaBox (WIP)
 
-A platform for creators to sell digital content and subscription services payment via USDC and Credit Card, built on [Scaffold-ETH 2](https://github.com/scaffold-eth/scaffold-eth-2).
+A platform for creators to sell digital content and subscription services payment via Cryptoand Credit Card, built on [Scaffold-ETH 2](https://github.com/scaffold-eth/scaffold-eth-2).
 
 > ⚠️ **Test Mode Instructions**
 >
@@ -20,7 +20,6 @@ A platform for creators to sell digital content and subscription services paymen
 > 3. Development Environment:
 >    - All features run on localhost for testing
 >    - Free tier available for all integrations (Privy, Stripe, Upstash)
->    - Perfect for testing product demand before upgrading to paid tiers
 > ```
 
 ## 📚 Documentation Links
@@ -37,7 +36,7 @@ This platform enables creators to:
 -   Sell downloadable digital content
 -   Offer subscription-based services
 -   Receive payments in both crypto and fiat currencies
--   Store user data and session management with Redis
+-   Store user data with Redis and allow session management
 
 ## 🔧 Technical Stack
 
@@ -70,7 +69,7 @@ This platform enables creators to:
     -   Subscription management
 
 -   **Payment Options**
-    -   Cryptocurrency payments (USDC)
+    -   Cryptocurrency payments (Test: USDC)
     -   Fiat currency integration via Stripe
     -   Automated revenue distribution
 

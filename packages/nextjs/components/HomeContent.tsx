@@ -1,11 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { ProductCard } from "./ProductCard";
 import { sampleProducts } from "./SampleProducts";
 import { usePrivy } from "@privy-io/react-auth";
-import { BugAntIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { UserAuth } from "~~/components/db";
 
 export const HomeContent = () => {
@@ -100,7 +98,7 @@ export const HomeContent = () => {
           <UserAuth />
         </div>
         {/* SE2 */}
-        <div className="flex-grow bg-base-300 w-full mt-16 px-8 py-12 rounded-3xl">
+        {/* <div className="flex-grow bg-base-300 w-full mt-16 px-8 py-12 rounded-3xl">
           <div className="flex justify-center items-center gap-12 flex-col sm:flex-row">
             <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl">
               <BugAntIcon className="h-8 w-8 fill-secondary" />
@@ -123,7 +121,7 @@ export const HomeContent = () => {
               </p>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
